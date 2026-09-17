@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>복지사업 레이더</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="복지레이더">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="description" content="사회복지 공모사업·지원사업을 모아 지금 접수중인 것만 보여주는 앱">
+<style>
+  :root{
+    --bg: #f2f2f7;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --bar-bg: rgba(255,255,255,0.72);
+    --sheet-bg: #ffffff;
+    --backdrop: rgba(0,0,0,0.28);
+    --ink: #1c1c1e;
+    --ink-dim: rgba(60,60,67,0.6);
+    --ink-tert: rgba(60,60,67,0.35);
+    --line: rgba(60,60,67,0.22);
+    --accent: #007aff;
+    --accent-ink: #ffffff;
+    --red: #ff3b30;
+    --red-soft: rgba(255,59,48,0.12);
+    --orange: #ff9500;
+    --orange-soft: rgba(255,149,0,0.13);
+    --green: #34c759;
+    --fill: rgba(120,120,128,0.12);
+    --fill-2: rgba(120,120,128,0.18);
+    --shadow: 0 1px 1px rgba(0,0,0,0.03), 0 8px 24px -12px rgba(0,0,0,0.16);
+    --shadow-lg: 0 12px 40px -8px rgba(0,0,0,0.28);
+    --r-lg: 20px;
+    --r-md: 14px;
+    --r-sm: 10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #000000;
+      --surface: #1c1c1e;
+      --surface-2: #2c2c2e;
+      --bar-bg: rgba(28,28,30,0.72);
+      --sheet-bg: #1c1c1e;
+      --backdrop: rgba(0,0,0,0.5);
+      --ink: #f2f2f7;
+      --ink-dim: rgba(235,235,245,0.6);
+      --ink-tert: rgba(235,235,245,0.35);
+      --line: rgba(84,84,88,0.55);
+      --accent: #0a84ff;
+      --accent-ink: #ffffff;
+      --red: #ff453a;
+      --red-soft: rgba(255,69,58,0.16);
+      --orange: #ff9f0a;
+      --orange-soft: rgba(255,159,10,0.16);
+      --green: #30d158;
+      --fill: rgba(120,120,128,0.24);
+      --fill-2: rgba(120,120,128,0.32);
+      --shadow: 0 1px 1px rgba(0,0,0,0.2), 0 8px 24px -10px rgba(0,0,0,0.6);
+      --shadow-lg: 0 16px 48px -8px rgba(0,0,0,0.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+    --bar-bg: rgba(28,28,30,0.72);
+    --sheet-bg: #1c1c1e;
+    --backdrop: rgba(0,0,0,0.5);
+    --ink: #f2f2f7;
+    --ink-dim: rgba(235,235,245,0.6);
+    --ink-tert: rgba(235,235,245,0.35);
+    --line: rgba(84,84,88,0.55);
+    --accent: #0a84ff;
+    --accent-ink: #ffffff;
+    --red: #ff453a;
+    --red-soft: rgba(255,69,58,0.16);
+    --orange: #ff9f0a;
+    --orange-soft: rgba(255,159,10,0.16);
+    --green: #30d158;
+    --fill: rgba(120,120,128,0.24);
+    --fill-2: rgba(120,120,128,0.32);
+    --shadow: 0 1px 1px rgba(0,0,0,0.2), 0 8px 24px -10px rgba(0,0,0,0.6);
+    --shadow-lg: 0 16px 48px -8px rgba(0,0,0,0.7);
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html, body{ background:var(--bg); }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Segoe UI","Malgun Gothic",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-0.01em;
+  }
+  a{ color:inherit; text-decoration:none; }
+  .tabular{ font-variant-numeric: tabular-nums; }
+  svg.ic{ width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-0.15em; }
+  svg.ic.fill{ fill:currentColor; stroke:none; }
+
+  button{ font:inherit; -webkit-appearance:none; appearance:none; border:none; background:none; color:inherit; cursor:pointer; }
+  button:active{ opacity:.7; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+
+  .app{ max-width: 1180px; margin:0 auto; padding-bottom:56px; }
+
+  /* ---------- Nav bar ---------- */
+  .navbar{
+    position: sticky; top:0; z-index:30;
+    background: var(--bar-bg);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 20px 10px;
+  }
+  .navbar-inner{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+  .title-block h1{
+    margin:0; font-size: clamp(26px,5vw,32px); font-weight:800; letter-spacing:-0.02em;
+    text-wrap:balance;
+  }
+  .title-block .subtitle{ margin:4px 0 0; font-size:13.5px; color:var(--ink-dim); line-height:1.5; max-width:56ch; }
+
+  .navbar-actions{ display:flex; align-items:center; gap:8px; flex:none; }
+
+  .filter-btn, .install-btn{
+    display:flex; align-items:center; gap:6px;
+    padding: 8px 14px 8px 12px;
+    background: var(--fill);
+    border-radius: 999px;
+    font-size: 14px; font-weight:600;
+    color: var(--accent);
+    flex:none;
+    transition: transform .12s;
+  }
+  .filter-btn:active, .install-btn:active{ transform: scale(0.94); }
+  .install-btn{ background: var(--accent); color:#fff; }
+  .filter-btn .badge{
+    background:var(--red); color:#fff; font-size:11px; font-weight:700;
+    min-width:16px; height:16px; border-radius:8px; padding:0 4px;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+
+  .meta-bar{
+    display:flex; flex-wrap:wrap; gap:6px 14px;
+    margin-top:10px; font-size:12px; color:var(--ink-dim);
+  }
+  .meta-bar b{ color:var(--ink); font-weight:600; }
+  .meta-bar .sep{ opacity:.5; }
+
+  /* ---------- Layout ---------- */
+  .content{
+    display:grid; grid-template-columns: 240px 1fr; gap:20px;
+    padding: 18px 20px 0; align-items:start;
+  }
+  @media (max-width: 820px){
+    .content{ grid-template-columns: 1fr; }
+    .filter-card{ display:none; }
+  }
+  @media (min-width: 821px){
+    .filter-btn{ display:none; }
+    .filter-card{ position:sticky; top:86px; }
+  }
+
+  /* ---------- Grouped filter list (shared by sidebar + sheet) ---------- */
+  .f-section{ margin-bottom:20px; }
+  .f-section:last-child{ margin-bottom:0; }
+  .f-section-title{
+    font-size:12px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    color: var(--ink-dim); margin: 0 0 6px 14px;
+  }
+  .f-section-card{
+    background: var(--surface); border-radius: var(--r-md); overflow:hidden;
+    box-shadow: var(--shadow);
+  }
+  .f-row{
+    display:flex; align-items:center; gap:10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    cursor:pointer; user-select:none;
+    position:relative;
+  }
+  .f-row:last-child{ border-bottom:none; }
+  .f-row:active{ background: var(--fill); }
+  .f-row input{ position:absolute; opacity:0; pointer-events:none; }
+  .f-row-icon{
+    width:26px; height:26px; border-radius:7px; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--fill); color: var(--ink-dim); font-size:14px;
+  }
+  .f-row-label{ flex:1; font-size:14.5px; }
+  .f-row-count{ font-size:13px; color:var(--ink-tert); }
+  .f-row-check{ width:20px; height:20px; color:var(--accent); flex:none; display:flex; }
+  .f-row-check svg{ display:none; }
+  .f-row.disabled{ opacity:.38; pointer-events:none; }
+  .f-row.on .f-row-check svg{ display:block; }
+  .f-row.on .f-row-icon{ background: var(--accent); color:#fff; }
+  .f-row.on .f-row-label{ font-weight:600; }
+
+  .reset-link{
+    display:block; width:100%; text-align:center;
+    margin-top:14px; padding:10px; font-size:14px; font-weight:600; color:var(--accent);
+  }
+
+  /* ---------- Bottom sheet (mobile) ---------- */
+  .sheet-backdrop{
+    position:fixed; inset:0; background:var(--backdrop); z-index:50;
+    opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .sheet-backdrop.show{ opacity:1; pointer-events:auto; }
+  .sheet{
+    position:fixed; left:0; right:0; bottom:0; z-index:51;
+    background:var(--sheet-bg);
+    border-radius: 20px 20px 0 0;
+    box-shadow: var(--shadow-lg);
+    max-height: 82vh; overflow-y:auto;
+    transform: translateY(105%);
+    transition: transform .32s cubic-bezier(.32,.72,0,1);
+    padding-bottom: 24px;
+  }
+  .sheet.show{ transform: translateY(0); }
+  .sheet-handle{ width:36px; height:5px; border-radius:3px; background:var(--fill-2); margin:8px auto 4px; }
+  .sheet-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 6px 16px 14px; border-bottom:1px solid var(--line); margin-bottom:16px;
+  }
+  .sheet-title{ font-size:16px; font-weight:700; }
+  .sheet-btn{ font-size:15px; color:var(--accent); font-weight:500; padding:4px; }
+  .sheet-btn.primary{ font-weight:700; }
+  .sheet-body{ padding: 0 16px; }
+  @media (min-width: 821px){ .sheet, .sheet-backdrop{ display:none; } }
+
+  /* ---------- Results ---------- */
+  .results-toolbar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:12px; flex-wrap:wrap;
+  }
+  .count-label{ font-size:14px; color:var(--ink-dim); }
+  .count-label b{ color:var(--ink); font-weight:700; }
+
+  .segmented{
+    display:inline-flex; background:var(--fill); border-radius:9px; padding:2px; gap:2px;
+  }
+  .seg-btn{
+    padding:6px 12px; font-size:12.5px; font-weight:600; border-radius:7px; color:var(--ink-dim);
+    transition: background .15s, color .15s;
+  }
+  .seg-btn.active{ background:var(--surface); color:var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+
+  .list{ display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap:12px; }
+
+  .card{
+    background:var(--surface); border-radius: var(--r-md);
+    box-shadow: var(--shadow);
+    padding: 14px 16px 14px;
+    display:flex; flex-direction:column; gap:8px;
+    transition: transform .12s;
+  }
+  .card:active{ transform: scale(0.99); }
+
+  .card-row1{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .src-label{ font-size:11.5px; font-weight:600; color:var(--ink-tert); }
+  .dday{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11.5px; font-weight:700; padding:3px 9px 3px 7px; border-radius:999px;
+    background: var(--fill); color:var(--ink-dim);
+  }
+  .dday svg{ width:11px; height:11px; }
+  .dday.soon{ background:var(--orange-soft); color:var(--orange); }
+  .dday.urgent{ background:var(--red-soft); color:var(--red); }
+
+  .card-title{ font-size:15.5px; line-height:1.4; font-weight:700; }
+  .card-title a:hover{ text-decoration:underline; }
+  .card-org{ font-size:12.5px; color:var(--ink-dim); }
+  .card-period{ font-size:12px; color:var(--ink-tert); }
+
+  .pills{ display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
+  .pill{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; font-weight:500; padding:3px 9px 3px 7px; border-radius:999px;
+    background: var(--fill); color: var(--ink-dim);
+  }
+  .pill svg{ width:11px; height:11px; }
+  .pill.cat{ background: transparent; border:1px solid var(--accent); color:var(--accent); }
+
+  .card-cta{
+    margin-top:6px; align-self:flex-end;
+    display:inline-flex; align-items:center; gap:5px;
+    background: var(--accent); color:#fff;
+    font-size:12.5px; font-weight:700;
+    padding:7px 12px 7px 13px; border-radius:999px;
+  }
+  .card-cta:active{ opacity:.75; }
+  .card-cta svg{ width:12px; height:12px; }
+
+  .empty{
+    padding: 52px 20px; text-align:center; color:var(--ink-dim);
+    background: var(--surface); border-radius: var(--r-md); font-size:14.5px;
+  }
+
+  footer.note{
+    margin: 28px 20px 0; padding-top:16px; border-top:1px solid var(--line);
+    font-size:11.5px; color:var(--ink-tert); line-height:1.7;
+  }
+
+  /* ---------- iOS-style alert (install guide) ---------- */
+  .ios-alert-backdrop{
+    position:fixed; inset:0; z-index:60;
+    background: var(--backdrop);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+    padding:20px;
+  }
+  .ios-alert-backdrop.show{ opacity:1; pointer-events:auto; }
+  .ios-alert{
+    width:100%; max-width:280px;
+    background: var(--bar-bg);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    text-align:center;
+    transform: scale(0.9); transition: transform .2s;
+  }
+  .ios-alert-backdrop.show .ios-alert{ transform: scale(1); }
+  .ios-alert-icon{
+    width:40px; height:40px; margin:18px auto 6px; border-radius:10px;
+    background: var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ios-alert-title{ font-size:16px; font-weight:700; padding: 2px 16px 4px; }
+  .ios-alert-msg{ font-size:13px; color:var(--ink-dim); padding: 0 16px 18px; line-height:1.6; }
+  .ios-alert-btn{
+    display:block; width:100%; padding:12px; font-size:15.5px; font-weight:600;
+    color:var(--accent); border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="title-block">
+        <h1>복지사업 레이더</h1>
+        <p class="subtitle">정보광장 · 홀트아동복지회 · 한국사회복지관협회 공고를 모아 오늘 접수중인 사업만 보여줍니다.</p>
+      </div>
+      <div class="navbar-actions">
+        <button class="install-btn" id="installBtn" type="button" hidden>
+          <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="7,10.5 12,15.5 17,10.5"/><path d="M5 16.5v2.3a1.7 1.7 0 0 0 1.7 1.7h10.6a1.7 1.7 0 0 0 1.7-1.7v-2.3"/></svg>
+          <span>설치</span>
+        </button>
+        <button class="filter-btn" id="filterBtn" type="button">
+          <svg class="ic" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><circle cx="9" cy="7" r="2.1" fill="currentColor" stroke="none"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2.1" fill="currentColor" stroke="none"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="11" cy="17" r="2.1" fill="currentColor" stroke="none"/></svg>
+          <span>필터</span>
+          <span class="badge" id="filterBadge" hidden>0</span>
+        </button>
+      </div>
+    </div>
+    <div class="meta-bar">
+      <span>마지막 수집 <b id="lastUpdated"></b></span>
+      <span class="sep">·</span>
+      <span>매일 자동 갱신</span>
+      <span class="sep">·</span>
+      <span>지금 <b id="nowLabel"></b> 접수중</span>
+    </div>
+  </header>
+
+  <div class="content">
+    <aside class="filter-card" id="filterPanelDesktop"></aside>
+
+    <main>
+      <div class="results-toolbar">
+        <div class="count-label"><b id="countNum">0</b>건 표시 중</div>
+        <div class="segmented" id="sortSeg">
+          <button type="button" class="seg-btn active" data-val="deadline">마감임박순</button>
+          <button type="button" class="seg-btn" data-val="new">최신순</button>
+        </div>
+      </div>
+      <div class="list" id="cards"></div>
+      <div class="empty" id="emptyState" hidden>선택한 조건에 맞는 접수중인 사업이 없습니다.<br>필터를 조정해 보세요.</div>
+    </main>
+  </div>
+
+  <footer class="note">
+    본 목록은 각 기관 공고 페이지를 자동으로 요약·정리한 것으로 표기 오류가 있을 수 있습니다. 신청 전 반드시 "공고 보기"에서 원문과 정확한 접수기간·자격요건을 확인하세요. 대상층·분야 태그는 제목과 공고 내용을 바탕으로 자동 분류되어 실제 조건과 다를 수 있습니다.
+  </footer>
+</div>
+
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="filterSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <button class="sheet-btn" id="sheetReset" type="button">초기화</button>
+    <div class="sheet-title">필터</div>
+    <button class="sheet-btn primary" id="sheetDone" type="button">완료</button>
+  </div>
+  <div class="sheet-body" id="filterPanelMobile"></div>
+</div>
+
+<div class="ios-alert-backdrop" id="iosAlertBackdrop">
+  <div class="ios-alert">
+    <div class="ios-alert-icon">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 15V4"/><polyline points="8,8 12,4 16,8"/><path d="M5 12.5v5.8A1.7 1.7 0 0 0 6.7 20h10.6a1.7 1.7 0 0 0 1.7-1.7v-5.8"/></svg>
+    </div>
+    <div class="ios-alert-title">홈 화면에 추가</div>
+    <div class="ios-alert-msg" id="iosAlertMsg">Safari 하단의 공유 버튼을 탭한 다음, "홈 화면에 추가"를 선택하세요.</div>
+    <button class="ios-alert-btn" id="iosAlertOk" type="button">확인</button>
+  </div>
+</div>
+
+<script>
+  var LAST_UPDATED = "2026-09-11";
+
+  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회" };
+
+  var ICONS = {
+    child: '<circle cx="12" cy="9" r="3.2"/><path d="M6 20c.7-3.3 3-5 6-5s5.3 1.7 6 5"/>',
+    teen: '<circle cx="12" cy="7.5" r="3"/><path d="M5.5 20c.6-3.6 3-5.6 6.5-5.6s5.9 2 6.5 5.6"/><path d="M9 12.5 12 15l3-2.5"/>',
+    youth: '<circle cx="12" cy="7.5" r="3"/><path d="M5.5 20c.6-3.6 3-5.6 6.5-5.6s5.9 2 6.5 5.6"/><path d="M12 4v-1.3M16.5 6l1-1"/>',
+    elder: '<circle cx="11" cy="7" r="2.8"/><path d="M6 20c.5-3 2.4-4.8 5-5.2M13.5 14.4c2.7.4 4.5 2.2 5 5.2"/><path d="M17 12.5 15.3 17l2.7 1.2"/>',
+    wheelchair: '<circle cx="10" cy="15.5" r="4.3"/><circle cx="8" cy="5.2" r="1.6" fill="currentColor" stroke="none"/><path d="M8.6 7v6.2h5.3l3 6"/><path d="M8.6 10.5h4.3"/>',
+    family: '<circle cx="8.5" cy="7.3" r="2.6"/><circle cx="16" cy="8.6" r="2.1"/><path d="M3.3 20c.5-3.3 2.5-5.2 5.2-5.2s4.7 1.9 5.2 5.2"/><path d="M14 20c.4-2.5 1.8-4 3.9-4.2"/>',
+    globe: '<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8c2.6 2.3 4 5.1 4 8.2s-1.4 5.9-4 8.2c-2.6-2.3-4-5.1-4-8.2s1.4-5.9 4-8.2Z"/>',
+    warn: '<path d="M12 4.2 21 19H3Z"/><path d="M12 10.3v3.6"/><circle cx="12" cy="16.6" r="0.9" fill="currentColor" stroke="none"/>',
+    grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>',
+    cash: '<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M5.5 9v0M18.5 15v0"/>',
+    medical: '<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/>',
+    house: '<path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/>',
+    book: '<path d="M4.5 5.2A2 2 0 0 1 6.3 4H12v15.5H6.3a2 2 0 0 0-1.8 1.1Z"/><path d="M19.5 5.2A2 2 0 0 0 17.7 4H12v15.5h5.7a2 2 0 0 1 1.8 1.1Z"/>',
+    trend: '<path d="M4 17 9.5 11l4 4L20 7"/><path d="M14.5 7H20v5.5"/>',
+    heart: '<path d="M12 20.2C6 16 3.2 12.6 3.2 9c0-2.8 2.1-4.8 4.7-4.8 1.8 0 3.3 1 4.1 2.5.8-1.5 2.3-2.5 4.1-2.5 2.6 0 4.7 2 4.7 4.8 0 3.6-2.8 7-8.8 11.2Z"/>',
+    bolt: '<path d="M13 3 5 14h5.5L11 21l8-11h-5.5Z"/>',
+    gift: '<rect x="3.5" y="9.5" width="17" height="11" rx="1.6"/><path d="M3.5 13.5h17"/><path d="M12 9.5v11"/><path d="M12 9.5C9.5 9.5 8 8 8 6.4 8 5 9 4 10.3 4c1.6 0 2.2 2 1.7 5.5Z"/><path d="M12 9.5c2.5 0 4-1.5 4-3.1C16 5 15 4 13.7 4c-1.6 0-2.2 2-1.7 5.5Z"/>',
+    dots: '<circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
+    check: '<polyline points="4,12.5 9.5,18 20,6"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.3 2"/>',
+    arrowUpRight: '<path d="M7 17 17 7"/><path d="M9.5 7H17v7.5"/>'
+  };
+  function ic(name, extraCls){ return '<svg class="ic' + (extraCls?(' '+extraCls):'') + '" viewBox="0 0 24 24">' + ICONS[name] + '</svg>'; }
+
+  var TARGET_META = [
+    ["아동","child"], ["청소년","teen"], ["청년","youth"], ["노인","elder"],
+    ["장애인","wheelchair"], ["한부모","family"], ["다문화","globe"], ["위기가정","warn"], ["전체","grid"]
+  ];
+  var CATEGORY_META = [
+    ["생계비","cash"], ["의료비","medical"], ["주거비","house"], ["교육비","book"],
+    ["자립지원","trend"], ["심리정서지원","heart"], ["위기긴급지원","bolt"], ["물품지원","gift"], ["기타","dots"]
+  ];
+
+  var PROGRAMS = [
+    {source:"kpang", title:"수호천사동음성명과 함께하는 한부모 자립역량강화지원사업", org:"수호천사동음성명", url:"https://kpang.kr/2026091105/", start:"2026-09-07", end:"2026-09-20", target:["한부모","청년"], category:["자립지원"]},
+    {source:"kpang", title:"2026년 세계문화유산탐방 공모형 '자립트립' 참여자 3차 모집", org:"경기도자립지원단", url:"https://kpang.kr/2026091104/", start:"2026-09-08", end:"2026-09-20", target:["청년","아동"], category:["자립지원"]},
+    {source:"kpang", title:"2026년 4분기 2차 국립횡성숲체원 「나눔의 숲 캠프」모집 공고", org:"국립횡성숲체원", url:"https://kpang.kr/2026091103/", start:"2026-08-24", end:"2026-11-13", target:["전체"], category:["심리정서지원"]},
+    {source:"kpang", title:"2026년 11월 베트남 해외건축봉사 영상 자원봉사자 모집", org:"한국해비타트", url:"https://kpang.kr/2026091102/", start:"2026-09-17", end:"2026-09-17", target:["전체"], category:["기타"]},
+    {source:"kpang", title:"2026년 남북청년 모임 활성화 지원사업", org:"사회복지법인 우양재단", url:"https://kpang.kr/2026091101/", start:"2026-09-10", end:"2026-09-27", target:["청년"], category:["심리정서지원"]},
+    {source:"kpang", title:"2026년 월드휴먼브리지 임신부/영유아영양물품 지원사업", org:"(사)월드휴먼브리지", url:"https://kpang.kr/2026091002/", start:"2026-09-07", end:"2026-09-21", target:["아동","위기가정"], category:["물품지원"]},
+    {source:"kpang", title:"2026년 아모레퍼시픽 아리따운 물품나눔 지원", org:"(주)아모레퍼시픽", url:"https://kpang.kr/2026091001/", start:"2026-09-09", end:"2026-09-30", target:["전체","다문화","청소년"], category:["물품지원"]},
+    {source:"kpang", title:"월드휴먼브리지 2026년 청년 취창업 지원사업", org:"월드휴먼브리지", url:"https://kpang.kr/2026090905/", start:"2026-09-07", end:"2026-09-30", target:["청년"], category:["자립지원"]},
+    {source:"kpang", title:"2026 위기 이주배경 가정 긴급지원 사업 '기대드림' 40차", org:"희망친구 기아대책", url:"https://kpang.kr/2026090904/", start:"2026-08-25", end:"2026-09-15", target:["다문화","위기가정"], category:["위기긴급지원"]},
+    {source:"kpang", title:"2026년 국립횡성숲체원 숲체험교육사업(산림문화) 모집공고", org:"국립횡성숲체원", url:"https://kpang.kr/2026090902/", start:"2026-09-22", end:"2099-12-31", target:["전체"], category:["심리정서지원"]},
+    {source:"kpang", title:"2026년 '희망둥지 SOS' 위기아동가정긴급지원사업(75차)", org:"희망친구 기아대책", url:"https://kpang.kr/2026090901/", start:"2026-08-25", end:"2026-09-15", target:["아동","위기가정"], category:["위기긴급지원"]},
+    {source:"kpang", title:"시니어브리지아카데미(38기)", org:"사단법인 함께만드는세상", url:"https://kpang.kr/2026090702/", start:"2026-09-07", end:"2026-10-02", target:["노인"], category:["자립지원"]},
+    {source:"kpang", title:"제25회 신한카드 꼬마피카소 그림축제", org:"아이들과미래재단", url:"https://kpang.kr/2026090701/", start:"2026-09-07", end:"2026-09-15", target:["아동"], category:["기타"]},
+    {source:"kpang", title:"2026년 하반기 '함께한 시간, 오래도록' 어르신 나들이 지원사업", org:"사회복지법인 우양재단", url:"https://kpang.kr/2026090401/", start:"2026-09-04", end:"2026-10-13", target:["노인","위기가정"], category:["심리정서지원"]},
+    {source:"kpang", title:"2026년 소규모 취약기관 월동난방비 지원사업", org:"세종사회복지공동모금회", url:"https://kpang.kr/2026090308-2/", start:"2026-09-01", end:"2026-09-18", target:["아동","장애인","전체"], category:["주거비"]},
+    {source:"kpang", title:"2026년 IBK기업은행과 함께하는 시니어인턴십채용지원프로그램", org:"사회복지법인 대한사회복지회", url:"https://kpang.kr/2026090307/", start:"2026-09-03", end:"2099-12-31", target:["노인"], category:["자립지원"]},
+    {source:"kpang", title:"장애인을 위한 기술·디자인 아이디어 공모전 D-TECH", org:"장애인기업종합지원센터", url:"https://kpang.kr/2026090302/", start:"2026-08-03", end:"2026-09-11", target:["장애인"], category:["기타"]},
+    {source:"kpang", title:"2026년 11월 틔움버스 지원 공모", org:"한국타이어나눔재단", url:"https://kpang.kr/2026090303/", start:"2026-08-31", end:"2026-09-11", target:["전체"], category:["기타"]},
+    {source:"kpang", title:"2026 한부모여성 재기 지원사업 – 교육비", org:"아름다운재단", url:"https://kpang.kr/2026090304/", start:"2026-09-01", end:"2026-09-21", target:["한부모"], category:["교육비"]},
+    {source:"kpang", title:"제36기 미래에셋 해외교환 장학생 선발(2027년 봄학기 파견)", org:"미래에셋박현주재단", url:"https://kpang.kr/2026090305/", start:"2026-09-30", end:"2026-10-06", target:["청년"], category:["교육비"]},
+
+    {source:"holt", title:"2026 학대피해아동가정 주거환경개선사업 '우리가족 울타리이음' 참여자 모집", org:"홀트아동복지회", url:"https://love.holt.or.kr/request_support/holt-residential-improvement-support-project-for-abused-children-families/", start:"2026-05-19", end:"2027-02-28", target:["아동","청소년"], category:["주거비"]},
+    {source:"holt", title:"국내·외 입양인 및 입양가족을 위한 홈페이지 「ITDA 잇다」개설안내", org:"홀트아동복지회", url:"https://love.holt.or.kr/join/support/", start:"2026-01-26", end:"2026-12-31", target:["아동","청소년"], category:["생계비"]},
+    {source:"holt", title:"2026 통합위기가정지원사업 '우리 가족을 지켜주세요' 대상자 모집", org:"홀트아동복지회", url:"https://love.holt.or.kr/join/support/", start:"2026-01-01", end:"2026-12-31", target:["아동","청소년"], category:["위기긴급지원"]},
+    {source:"holt", title:"한부모 자립역량강화지원사업 'With우리 수호천사 프로젝트' 2차년도 참여자 모집", org:"홀트아동복지회", url:"https://love.holt.or.kr/join/support/", start:"2026-09-07", end:"2026-09-20", target:["한부모"], category:["자립지원"]},
+
+    {source:"kaswc", title:"우리금융그룹과 함께하는 복지서비스기관 맞춤형 지원사업", org:"굿네이버스", url:"https://share.kaswc.or.kr/info2/9345", start:"2026-09-01", end:"2026-09-14", target:[], category:["기타"]},
+    {source:"kaswc", title:"2026년 4분기 위기가정 지원사업 EBS나눔0700 방송사례 추천", org:"대한사회복지회", url:"https://share.kaswc.or.kr/info2/9320", start:"2026-08-28", end:"2026-09-30", target:["위기가정"], category:["위기긴급지원"]},
+    {source:"kaswc", title:"2026년 한국수출입은행 다문화 차량지원사업", org:"사회복지공동모금회", url:"https://share.kaswc.or.kr/info2/9191", start:"2026-08-19", end:"2026-09-14", target:["다문화"], category:["물품지원"]},
+    {source:"kaswc", title:"지파운데이션 물품지원사업 「당나귀」 어플을 통한 신청", org:"지파운데이션", url:"https://share.kaswc.or.kr/info2/9154", start:"2026-08-18", end:"2026-12-31", target:[], category:["물품지원"]},
+    {source:"kaswc", title:"KT&G복지재단 온라인지원사업 신청 안내", org:"KT&G복지재단", url:"https://share.kaswc.or.kr/info2/9107", start:"2026-08-13", end:"2026-12-20", target:[], category:["기타"]},
+    {source:"kaswc", title:"[환경재단] 기후위기 취약계층 아동지원 2차 캠페인", org:"환경재단", url:"https://share.kaswc.or.kr/info2/8932", start:"2026-08-03", end:"2026-10-22", target:["아동"], category:["기타"]},
+    {source:"kaswc", title:"2026년 세이브더칠드런 '영세소상공인 가정의 에너지 지원'", org:"세이브더칠드런", url:"https://share.kaswc.or.kr/info2/8004", start:"2026-05-18", end:"2026-12-31", target:["위기가정"], category:["생계비"]},
+    {source:"kaswc", title:"지역 내 1인 가구가 함께 소통해요! 「중장년-마주봄」", org:"고양시일산종합사회복지관", url:"https://share.kaswc.or.kr/info2/7859", start:"2026-03-02", end:"2026-12-31", target:["전체"], category:["심리정서지원"]},
+    {source:"kaswc", title:"북한이탈배경 가정의 가족 기능 강화 프로그램 「보통의 가족」", org:"고양시일산종합사회복지관", url:"https://share.kaswc.or.kr/info2/7841", start:"2026-03-01", end:"2026-11-30", target:["위기가정"], category:["심리정서지원"]},
+    {source:"kaswc", title:"2026년 위기가정 지원사업 「위기의 순간, 신한과 함께」", org:"사회복지법인 굿네이버스", url:"https://share.kaswc.or.kr/info2/7673", start:"2026-03-01", end:"2026-11-30", target:["위기가정"], category:["위기긴급지원"]},
+    {source:"kaswc", title:"IBK와 함께하는 중소기업 맞춤형지원사업 신청", org:"대한사회복지회", url:"https://share.kaswc.or.kr/info2/7309", start:"2025-10-01", end:"2026-12-31", target:[], category:["기타"]},
+    {source:"kaswc", title:"2026년 함께하는 사랑밭 『위기가정 희망지원사업』 안내", org:"함께하는 사랑밭", url:"https://share.kaswc.or.kr/info2/7012", start:"2026-02-13", end:"2026-12-31", target:["위기가정"], category:["위기긴급지원"]},
+    {source:"kaswc", title:"2026년 굿피플 방송 및 온라인 모금 사례 안내문", org:"굿피플인터내셔널", url:"https://share.kaswc.or.kr/info2/6957", start:"2026-01-01", end:"2026-12-31", target:[], category:["기타"]}
+  ];
+
+  PROGRAMS.forEach(function(p, i){ p.id = i; });
+
+  function parseDate(s){ var parts = s.split("-").map(Number); return new Date(parts[0], parts[1]-1, parts[2]); }
+  function startOfToday(){ var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+  function fmt(d){ return d.getFullYear() + "." + String(d.getMonth()+1).padStart(2,"0") + "." + String(d.getDate()).padStart(2,"0"); }
+  function isRolling(p){ return parseDate(p.end).getFullYear() >= 2099; }
+  function isOpen(p, today){ var s = parseDate(p.start), e = parseDate(p.end); return s <= today && today <= e; }
+
+  var today = startOfToday();
+  var openPrograms = PROGRAMS.filter(function(p){ return isOpen(p, today); });
+
+  document.getElementById("lastUpdated").textContent = LAST_UPDATED;
+  document.getElementById("nowLabel").textContent = openPrograms.length + "건";
+
+  var state = { target: new Set(), category: new Set(), source: new Set(), sort: "deadline" };
+
+  function countFor(key, val){
+    if(key === "source") return openPrograms.filter(function(p){ return p.source === val; }).length;
+    return openPrograms.filter(function(p){ return p[key].indexOf(val) !== -1; }).length;
+  }
+
+  function buildSection(title, metaList, key, labelOf){
+    labelOf = labelOf || function(v){ return v; };
+    var rows = metaList.map(function(m){
+      var val = m[0], iconName = m[1];
+      var n = countFor(key, val);
+      var on = state[key].has(val);
+      return '<label class="f-row' + (n===0?' disabled':'') + (on?' on':'') + '" data-key="' + key + '" data-val="' + val + '">' +
+        '<input type="checkbox" ' + (n===0?'disabled':'') + (on?'checked':'') + '>' +
+        '<span class="f-row-icon">' + ic(iconName) + '</span>' +
+        '<span class="f-row-label">' + labelOf(val) + '</span>' +
+        '<span class="f-row-count tabular">' + n + '</span>' +
+        '<span class="f-row-check">' + ic('check') + '</span>' +
+      '</label>';
+    }).join('');
+    return '<div class="f-section"><div class="f-section-title">' + title + '</div><div class="f-section-card">' + rows + '</div></div>';
+  }
+
+  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"]];
+
+  function filterPanelHTML(){
+    return buildSection("대상층", TARGET_META, "target") +
+           buildSection("분야", CATEGORY_META, "category") +
+           buildSection("출처", SOURCE_META, "source", function(v){ return SOURCES[v]; }) +
+           '<button type="button" class="reset-link" id="resetLink' + Math.random().toString(36).slice(2,6) + '">필터 초기화</button>';
+  }
+
+  var desktopPanel = document.getElementById("filterPanelDesktop");
+  var mobilePanel = document.getElementById("filterPanelMobile");
+
+  function attachRowHandlers(container){
+    container.querySelectorAll('.f-row').forEach(function(row){
+      row.addEventListener('click', function(e){
+        e.preventDefault();
+        if(row.classList.contains('disabled')) return;
+        var key = row.getAttribute('data-key'), val = row.getAttribute('data-val');
+        if(state[key].has(val)) state[key].delete(val); else state[key].add(val);
+        renderFilters();
+        renderResults();
+      });
+    });
+    var resetBtn = container.querySelector('.reset-link');
+    if(resetBtn){
+      resetBtn.addEventListener('click', function(){
+        state.target.clear(); state.category.clear(); state.source.clear();
+        renderFilters(); renderResults();
+      });
+    }
+  }
+
+  function renderFilters(){
+    var html = filterPanelHTML();
+    desktopPanel.innerHTML = html;
+    mobilePanel.innerHTML = html;
+    attachRowHandlers(desktopPanel);
+    attachRowHandlers(mobilePanel);
+    var total = state.target.size + state.category.size + state.source.size;
+    var badge = document.getElementById("filterBadge");
+    if(total > 0){ badge.hidden = false; badge.textContent = total; } else { badge.hidden = true; }
+  }
+
+  function matches(p){
+    if(state.target.size > 0 && !p.target.some(function(t){ return state.target.has(t); })) return false;
+    if(state.category.size > 0 && !p.category.some(function(c){ return state.category.has(c); })) return false;
+    if(state.source.size > 0 && !state.source.has(p.source)) return false;
+    return true;
+  }
+
+  function ddayInfo(p){
+    if(isRolling(p)) return { label: "상시모집", cls: "" };
+    var e = parseDate(p.end);
+    var diff = Math.round((e - today) / 86400000);
+    if(diff <= 0) return { label: "오늘마감", cls: "urgent" };
+    if(diff <= 3) return { label: "D-" + diff, cls: "urgent" };
+    if(diff <= 7) return { label: "D-" + diff, cls: "soon" };
+    return { label: "D-" + diff, cls: "" };
+  }
+  function periodLabel(p){
+    if(isRolling(p)) return fmt(parseDate(p.start)) + " ~ 상시";
+    return fmt(parseDate(p.start)) + " ~ " + fmt(parseDate(p.end));
+  }
+  var TARGET_ICON = {}; TARGET_META.forEach(function(m){ TARGET_ICON[m[0]] = m[1]; });
+  var CATEGORY_ICON = {}; CATEGORY_META.forEach(function(m){ CATEGORY_ICON[m[0]] = m[1]; });
+
+  function renderResults(){
+    var list = openPrograms.filter(matches);
+    if(state.sort === "deadline"){
+      list = list.slice().sort(function(a,b){ return parseDate(a.end) - parseDate(b.end); });
+    } else {
+      list = list.slice().sort(function(a,b){ return a.id - b.id; });
+    }
+
+    document.getElementById("countNum").textContent = list.length;
+    var cards = document.getElementById("cards");
+    var empty = document.getElementById("emptyState");
+
+    if(list.length === 0){
+      cards.innerHTML = "";
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+
+    cards.innerHTML = list.map(function(p){
+      var dd = ddayInfo(p);
+      var pillsHtml = p.target.map(function(t){
+        return '<span class="pill">' + ic(TARGET_ICON[t]) + t + '</span>';
+      }).join('') + p.category.map(function(c){
+        return '<span class="pill cat">' + ic(CATEGORY_ICON[c]) + c + '</span>';
+      }).join('');
+
+      return '<article class="card">' +
+        '<div class="card-row1">' +
+          '<span class="src-label">' + SOURCES[p.source] + '</span>' +
+          '<span class="dday tabular ' + dd.cls + '">' + ic('clock') + dd.label + '</span>' +
+        '</div>' +
+        '<h3 class="card-title"><a href="' + p.url + '" target="_blank" rel="noopener">' + p.title + '</a></h3>' +
+        '<div class="card-org">' + p.org + '</div>' +
+        '<div class="card-period tabular">' + periodLabel(p) + '</div>' +
+        (pillsHtml ? '<div class="pills">' + pillsHtml + '</div>' : '') +
+        '<a class="card-cta" href="' + p.url + '" target="_blank" rel="noopener">공고 보기' + ic('arrowUpRight') + '</a>' +
+      '</article>';
+    }).join('');
+  }
+
+  renderFilters();
+  renderResults();
+
+  document.getElementById("sortSeg").addEventListener('click', function(e){
+    var btn = e.target.closest('.seg-btn');
+    if(!btn) return;
+    document.querySelectorAll('#sortSeg .seg-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.sort = btn.getAttribute('data-val');
+    renderResults();
+  });
+
+  var filterBtn = document.getElementById("filterBtn");
+  var sheet = document.getElementById("filterSheet");
+  var sheetBackdrop = document.getElementById("sheetBackdrop");
+  function openSheet(){ sheet.classList.add('show'); sheetBackdrop.classList.add('show'); }
+  function closeSheet(){ sheet.classList.remove('show'); sheetBackdrop.classList.remove('show'); }
+  filterBtn.addEventListener('click', openSheet);
+  sheetBackdrop.addEventListener('click', closeSheet);
+  document.getElementById("sheetDone").addEventListener('click', closeSheet);
+  document.getElementById("sheetReset").addEventListener('click', function(){
+    state.target.clear(); state.category.clear(); state.source.clear();
+    renderFilters(); renderResults();
+  });
+
+  // ---------- Install as app ----------
+  var installBtn = document.getElementById("installBtn");
+  var iosAlertBackdrop = document.getElementById("iosAlertBackdrop");
+  var iosAlertMsg = document.getElementById("iosAlertMsg");
+  var deferredPrompt = null;
+
+  var ua = navigator.userAgent || "";
+  var isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var isAndroid = /android/i.test(ua);
+  var isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+
+  if(!isStandalone){
+    if(isIOS){
+      iosAlertMsg.textContent = 'Safari 하단의 공유 버튼을 탭한 다음, "홈 화면에 추가"를 선택하세요.';
+      installBtn.hidden = false;
+    } else if(isAndroid){
+      iosAlertMsg.textContent = '브라우저 메뉴(⋮)를 연 다음, "앱 설치" 또는 "홈 화면에 추가"를 선택하세요.';
+    }
+  }
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.hidden = false;
+  });
+
+  installBtn.addEventListener('click', function(){
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function(){
+        deferredPrompt = null;
+        installBtn.hidden = true;
+      });
+    } else {
+      iosAlertBackdrop.classList.add('show');
+    }
+  });
+
+  document.getElementById("iosAlertOk").addEventListener('click', function(){
+    iosAlertBackdrop.classList.remove('show');
+  });
+  iosAlertBackdrop.addEventListener('click', function(e){
+    if(e.target === iosAlertBackdrop) iosAlertBackdrop.classList.remove('show');
+  });
+
+  window.addEventListener('appinstalled', function(){
+    installBtn.hidden = true;
+  });
+</script>
+</body>
+</html>
