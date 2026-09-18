@@ -336,6 +336,34 @@
   }
   .toast.show{ opacity:1; transform:translate(-50%,0); }
 
+  /* ---------- File upload (find by document) ---------- */
+  .upload-card{
+    display:flex; align-items:center; gap:12px;
+    margin: 14px 20px 0; padding: 14px 16px;
+    background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow);
+  }
+  .upload-icon{
+    width:38px; height:38px; border-radius:10px; flex:none;
+    background: var(--fill); color: var(--accent);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .upload-text{ flex:1; min-width:0; }
+  .upload-title{ font-size:14px; font-weight:700; }
+  .upload-sub{ font-size:12px; color:var(--ink-dim); margin-top:2px; line-height:1.4; }
+  .upload-btn{
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    background: var(--accent); color:#fff;
+    font-size:13px; font-weight:700;
+    padding:9px 15px; border-radius:999px; cursor:pointer;
+  }
+  .upload-btn:active{ opacity:.8; }
+  .upload-status{
+    margin: 10px 20px 0; padding: 10px 14px;
+    background: var(--fill); border-radius: var(--r-sm);
+    font-size:12.5px; color: var(--ink-dim); line-height:1.5;
+  }
+  .upload-status.error{ background: var(--red-soft); color: var(--red); }
+
   .empty{
     padding: 52px 20px; text-align:center; color:var(--ink-dim);
     background: var(--surface); border-radius: var(--r-md); font-size:14.5px;
@@ -408,6 +436,19 @@
       <span>지금 <b id="nowLabel"></b> 접수중</span>
     </div>
   </header>
+
+  <div class="upload-card">
+    <div class="upload-icon">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>
+    </div>
+    <div class="upload-text">
+      <div class="upload-title">파일로 관련 사업 찾기</div>
+      <div class="upload-sub">PDF나 사진(JPG·캡처본)을 올리면 내용에서 대상층·분야를 찾아 필터에 자동으로 반영해요</div>
+    </div>
+    <label class="upload-btn" for="fileInput">파일 선택</label>
+    <input type="file" id="fileInput" accept=".pdf,application/pdf,image/*" hidden>
+  </div>
+  <div class="upload-status" id="uploadStatus" hidden></div>
 
   <div class="content">
     <aside class="filter-card" id="filterPanelDesktop"></aside>
@@ -815,6 +856,131 @@
 
   window.addEventListener('appinstalled', function(){
     installBtn.hidden = true;
+  });
+
+  // ---------- Find by document (PDF / image) ----------
+  var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+  var PDFJS_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  var TESSERACT_URL = "https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/7.0.0/tesseract.min.js";
+
+  var TARGET_KEYWORDS = {
+    "아동": ["아동","어린이"],
+    "청소년": ["청소년"],
+    "청년": ["청년"],
+    "노인": ["노인","어르신","고령자"],
+    "장애인": ["장애인","장애"],
+    "한부모": ["한부모","미혼모","미혼부","조손가정"],
+    "다문화": ["다문화","이주민","외국인","탈북","북한이탈"],
+    "위기가정": ["위기가정","위기","취약가정","긴급"]
+  };
+  var CATEGORY_KEYWORDS = {
+    "생계비": ["생계비","생계","생활비"],
+    "의료비": ["의료비","의료","치료비","진료비"],
+    "주거비": ["주거비","주거","임대료","월세"],
+    "교육비": ["교육비","학비","장학"],
+    "자립지원": ["자립"],
+    "심리정서지원": ["심리","정서","상담"],
+    "위기긴급지원": ["긴급지원","위기지원"],
+    "물품지원": ["물품","생필품"]
+  };
+
+  function extractKeywordTags(text){
+    var t = text || "";
+    var targets = Object.keys(TARGET_KEYWORDS).filter(function(tag){
+      return TARGET_KEYWORDS[tag].some(function(kw){ return t.indexOf(kw) !== -1; });
+    });
+    var categories = Object.keys(CATEGORY_KEYWORDS).filter(function(tag){
+      return CATEGORY_KEYWORDS[tag].some(function(kw){ return t.indexOf(kw) !== -1; });
+    });
+    return { targets: targets, categories: categories };
+  }
+
+  function loadScriptOnce(src){
+    return new Promise(function(resolve, reject){
+      var s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  var pdfjsReady = null, tesseractReady = null;
+  function ensurePdfJs(){
+    if(!pdfjsReady){
+      pdfjsReady = loadScriptOnce(PDFJS_URL).then(function(){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+      });
+    }
+    return pdfjsReady;
+  }
+  function ensureTesseract(){
+    if(!tesseractReady) tesseractReady = loadScriptOnce(TESSERACT_URL);
+    return tesseractReady;
+  }
+
+  function extractPdfText(file){
+    return ensurePdfJs().then(function(){
+      return file.arrayBuffer();
+    }).then(function(buf){
+      return window.pdfjsLib.getDocument({ data: buf }).promise;
+    }).then(function(pdf){
+      var pagePromises = [];
+      for(var i = 1; i <= pdf.numPages; i++){
+        pagePromises.push(pdf.getPage(i).then(function(page){
+          return page.getTextContent();
+        }).then(function(tc){
+          return tc.items.map(function(it){ return it.str; }).join(' ');
+        }));
+      }
+      return Promise.all(pagePromises);
+    }).then(function(pageTexts){
+      return pageTexts.join('\n');
+    });
+  }
+
+  function extractImageText(file){
+    return ensureTesseract().then(function(){
+      return window.Tesseract.recognize(file, 'kor+eng');
+    }).then(function(result){
+      return result.data.text;
+    });
+  }
+
+  var uploadStatusEl = document.getElementById('uploadStatus');
+  function setUploadStatus(msg, isError){
+    uploadStatusEl.hidden = false;
+    uploadStatusEl.textContent = msg;
+    uploadStatusEl.classList.toggle('error', !!isError);
+  }
+
+  function applyExtractedText(text){
+    var found = extractKeywordTags(text);
+    if(found.targets.length === 0 && found.categories.length === 0){
+      setUploadStatus('파일에서 일치하는 키워드를 찾지 못했어요. 필터를 직접 선택해보세요.');
+      return;
+    }
+    state.target = new Set(found.targets);
+    state.category = new Set(found.categories);
+    renderFilters();
+    renderResults();
+    setUploadStatus('찾은 키워드: ' + found.targets.concat(found.categories).join(', ') + ' — 필터에 반영했어요.');
+  }
+
+  document.getElementById('fileInput').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if(!file) return;
+
+    var isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    var isImage = file.type.indexOf('image/') === 0;
+    if(!isPdf && !isImage){
+      setUploadStatus('PDF 또는 이미지(JPG·PNG) 파일만 지원해요.', true);
+      return;
+    }
+
+    setUploadStatus((isPdf ? 'PDF' : '이미지') + '를 분석하고 있어요…');
+    var extract = isPdf ? extractPdfText(file) : extractImageText(file);
+    extract.then(applyExtractedText).catch(function(){
+      setUploadStatus('파일을 읽는 중 문제가 발생했어요. 다른 파일로 시도해보세요.', true);
+    });
   });
 </script>
 </body>
