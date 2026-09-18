@@ -168,7 +168,16 @@
   }
   @media (min-width: 821px){
     .filter-btn{ display:none; }
-    .filter-card{ position:sticky; top:86px; }
+    .filter-card{
+      position:sticky; top:86px;
+      max-height: calc(100vh - 96px);
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+    }
+    .filter-card::-webkit-scrollbar{ width:6px; }
+    .filter-card::-webkit-scrollbar-thumb{ background: var(--fill-2); border-radius:3px; }
+    .filter-card::-webkit-scrollbar-track{ background: transparent; }
   }
 
   /* ---------- Grouped filter list (shared by sidebar + sheet) ---------- */
