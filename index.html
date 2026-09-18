@@ -277,7 +277,13 @@
   .card:active{ transform: scale(0.99); }
 
   .card-row1{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .card-row1-left{ display:flex; align-items:center; gap:6px; min-width:0; }
   .src-label{ font-size:11.5px; font-weight:600; color:var(--ink-tert); }
+  .new-badge{
+    font-size:10px; font-weight:800; letter-spacing:.03em;
+    padding:2px 7px; border-radius:999px; flex:none;
+    background: var(--green); color:#fff;
+  }
   .dday{
     display:inline-flex; align-items:center; gap:4px;
     font-size:11.5px; font-weight:700; padding:3px 9px 3px 7px; border-radius:999px;
@@ -518,6 +524,24 @@
   var today = startOfToday();
   var openPrograms = PROGRAMS.filter(function(p){ return isOpen(p, today); });
 
+  function programKey(p){ return p.source + "::" + p.url; }
+  (function markNewPrograms(){
+    var SEEN_KEY = "welfareRadarSeenKeys";
+    var seenKeys = null;
+    try {
+      var stored = localStorage.getItem(SEEN_KEY);
+      seenKeys = stored ? new Set(JSON.parse(stored)) : null;
+    } catch(e) { seenKeys = null; }
+    var isFirstVisit = (seenKeys === null);
+    if (isFirstVisit) seenKeys = new Set();
+    openPrograms.forEach(function(p){
+      p.isNew = !isFirstVisit && !seenKeys.has(programKey(p));
+    });
+    try {
+      localStorage.setItem(SEEN_KEY, JSON.stringify(openPrograms.map(programKey)));
+    } catch(e) {}
+  })();
+
   document.getElementById("lastUpdated").textContent = LAST_UPDATED;
   document.getElementById("nowLabel").textContent = openPrograms.length + "건";
 
@@ -640,7 +664,10 @@
 
       return '<article class="card">' +
         '<div class="card-row1">' +
-          '<span class="src-label">' + SOURCES[p.source] + '</span>' +
+          '<div class="card-row1-left">' +
+            '<span class="src-label">' + SOURCES[p.source] + '</span>' +
+            (p.isNew ? '<span class="new-badge">NEW</span>' : '') +
+          '</div>' +
           '<span class="dday tabular ' + dd.cls + '">' + ic('clock') + dd.label + '</span>' +
         '</div>' +
         '<h3 class="card-title"><a href="' + p.url + '" target="_blank" rel="noopener">' + p.title + '</a></h3>' +
