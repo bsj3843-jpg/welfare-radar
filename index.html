@@ -364,6 +364,18 @@
   }
   .upload-status.error{ background: var(--red-soft); color: var(--red); }
 
+  .paste-box{
+    margin: 10px 20px 0;
+    min-height:22px;
+    padding:11px 14px;
+    border:1.5px dashed var(--line);
+    border-radius: var(--r-sm);
+    font-size:13px; color: var(--ink);
+    outline:none; line-height:1.5;
+  }
+  .paste-box:empty:before{ content: attr(data-placeholder); color: var(--ink-tert); }
+  .paste-box:focus{ border-color: var(--accent); border-style:solid; }
+
   .empty{
     padding: 52px 20px; text-align:center; color:var(--ink-dim);
     background: var(--surface); border-radius: var(--r-md); font-size:14.5px;
@@ -448,6 +460,7 @@
     <label class="upload-btn" for="fileInput">파일 선택</label>
     <input type="file" id="fileInput" accept=".pdf,application/pdf,image/*" hidden>
   </div>
+  <div class="paste-box" id="pasteBox" contenteditable="true" data-placeholder="여기에 클릭한 뒤 텍스트나 캡처 이미지를 붙여넣으세요 (Ctrl+V)"></div>
   <div class="upload-status" id="uploadStatus" hidden></div>
 
   <div class="content">
@@ -981,6 +994,46 @@
     extract.then(applyExtractedText).catch(function(){
       setUploadStatus('파일을 읽는 중 문제가 발생했어요. 다른 파일로 시도해보세요.', true);
     });
+  });
+
+  var pasteBox = document.getElementById('pasteBox');
+  pasteBox.addEventListener('paste', function(e){
+    e.preventDefault();
+    var cd = e.clipboardData || window.clipboardData;
+    if(!cd){ pasteBox.textContent = ''; return; }
+    var items = cd.items || [];
+    var imageItem = null;
+    for(var i = 0; i < items.length; i++){
+      if(items[i].type && items[i].type.indexOf('image/') === 0){ imageItem = items[i]; break; }
+    }
+    if(imageItem){
+      var file = imageItem.getAsFile();
+      pasteBox.textContent = '';
+      setUploadStatus('붙여넣은 이미지를 분석하고 있어요…');
+      extractImageText(file).then(applyExtractedText).catch(function(){
+        setUploadStatus('이미지를 읽는 중 문제가 발생했어요.', true);
+      });
+      return;
+    }
+    var text = cd.getData('text/plain');
+    pasteBox.textContent = '';
+    if(text && text.trim()){
+      setUploadStatus('붙여넣은 텍스트를 분석하고 있어요…');
+      applyExtractedText(text);
+    } else {
+      setUploadStatus('붙여넣은 내용이 비어있어요.', true);
+    }
+  });
+  pasteBox.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      var text = pasteBox.textContent.trim();
+      pasteBox.textContent = '';
+      if(text){
+        setUploadStatus('입력한 내용을 분석하고 있어요…');
+        applyExtractedText(text);
+      }
+    }
   });
 </script>
 </body>
