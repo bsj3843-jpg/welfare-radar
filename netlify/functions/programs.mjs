@@ -3,10 +3,16 @@ import { getStore } from "@netlify/blobs";
 const STORE_NAME = "user-programs";
 const KEY = "list";
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "content-type",
+};
+
 function json(body, status) {
   return new Response(JSON.stringify(body), {
     status: status || 200,
-    headers: { "content-type": "application/json; charset=utf-8" },
+    headers: { "content-type": "application/json; charset=utf-8", ...CORS_HEADERS },
   });
 }
 
@@ -25,6 +31,10 @@ function newId() {
 }
 
 export default async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   const store = getStore(STORE_NAME);
 
   if (req.method === "GET") {

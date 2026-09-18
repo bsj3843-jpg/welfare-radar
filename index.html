@@ -558,6 +558,7 @@
 
 <script>
   var LAST_UPDATED = "2026-09-18";
+  var API_BASE = "https://snwc.netlify.app";
 
   var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", user: "직원 등록" };
 
@@ -1089,7 +1090,7 @@
     if(start > end){ setUploadStatus('접수 종료일이 시작일보다 빠를 수 없어요.', true); return; }
 
     setUploadStatus('등록하고 있어요…');
-    fetch('/api/programs', {
+    fetch(API_BASE + '/api/programs', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -1109,7 +1110,7 @@
   });
 
   function loadUserPrograms(){
-    fetch('/api/programs').then(function(res){
+    fetch(API_BASE + '/api/programs').then(function(res){
       return res.ok ? res.json() : [];
     }).then(function(list){
       if(!Array.isArray(list)) return;
