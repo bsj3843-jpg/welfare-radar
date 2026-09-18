@@ -364,6 +364,32 @@
   }
   .upload-status.error{ background: var(--red-soft); color: var(--red); }
 
+  .review-form{
+    margin: 10px 20px 0; padding: 14px 16px;
+    background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .review-title{ font-size:13.5px; font-weight:700; }
+  .review-hint{ font-size:11.5px; color: var(--ink-tert); margin-top:-6px; }
+  .review-field{ display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--ink-dim); font-weight:600; }
+  .review-field input{
+    font: inherit; font-size:14px; color:var(--ink); font-weight:400;
+    padding:9px 11px; border-radius:9px; border:1px solid var(--line); background:var(--bg);
+  }
+  .review-field input:focus{ outline:none; border-color:var(--accent); }
+  .review-dates{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .review-label{ font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-tert); }
+  .review-chipgroup{ display:flex; flex-wrap:wrap; gap:6px; }
+  .rv-chip{
+    font-size:12px; font-weight:600; padding:6px 12px; border-radius:999px;
+    background: var(--fill); color: var(--ink-dim); border:1px solid transparent;
+  }
+  .rv-chip.on{ background: var(--accent); color:#fff; }
+  .review-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:2px; }
+  .review-cancel{ font-size:13px; font-weight:600; color:var(--ink-dim); padding:9px 14px; border-radius:999px; }
+  .review-submit{ font-size:13px; font-weight:700; color:#fff; background:var(--accent); padding:9px 16px; border-radius:999px; }
+  .review-cancel:active, .review-submit:active{ opacity:.75; }
+
   .paste-box{
     margin: 10px 20px 0;
     min-height:22px;
@@ -463,6 +489,30 @@
   <div class="paste-box" id="pasteBox" contenteditable="true" data-placeholder="여기에 클릭한 뒤 텍스트나 캡처 이미지를 붙여넣으세요 (Ctrl+V)"></div>
   <div class="upload-status" id="uploadStatus" hidden></div>
 
+  <div class="review-form" id="reviewForm" hidden>
+    <div class="review-title">내용을 확인하고 등록하세요</div>
+    <div class="review-hint">자동으로 추출한 값이라 정확하지 않을 수 있어요. 필요한 부분을 고쳐주세요.</div>
+    <label class="review-field">사업명<input type="text" id="rvTitle" placeholder="사업명을 입력하세요"></label>
+    <label class="review-field">주관기관<input type="text" id="rvOrg" placeholder="주관기관(선택)"></label>
+    <label class="review-field">원문 링크<input type="text" id="rvUrl" placeholder="https://... (선택)"></label>
+    <div class="review-dates">
+      <label class="review-field">접수 시작<input type="date" id="rvStart"></label>
+      <label class="review-field">접수 종료<input type="date" id="rvEnd"></label>
+    </div>
+    <div>
+      <div class="review-label">대상층</div>
+      <div class="review-chipgroup" id="rvTargetChips" style="margin-top:6px;"></div>
+    </div>
+    <div>
+      <div class="review-label">분야</div>
+      <div class="review-chipgroup" id="rvCategoryChips" style="margin-top:6px;"></div>
+    </div>
+    <div class="review-actions">
+      <button type="button" class="review-cancel" id="rvCancel">취소</button>
+      <button type="button" class="review-submit" id="rvSubmit">등록하기</button>
+    </div>
+  </div>
+
   <div class="content">
     <aside class="filter-card" id="filterPanelDesktop"></aside>
 
@@ -509,7 +559,7 @@
 <script>
   var LAST_UPDATED = "2026-09-18";
 
-  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회" };
+  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", user: "직원 등록" };
 
   var ICONS = {
     child: '<circle cx="12" cy="9" r="3.2"/><path d="M6 20c.7-3.3 3-5 6-5s5.3 1.7 6 5"/>',
@@ -643,7 +693,7 @@
     return '<div class="f-section"><div class="f-section-title">' + title + '</div><div class="f-section-card">' + rows + '</div></div>';
   }
 
-  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"]];
+  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"],["user","grid"]];
 
   function filterPanelHTML(){
     return buildSection("대상층", TARGET_META, "target") +
@@ -964,18 +1014,124 @@
     uploadStatusEl.classList.toggle('error', !!isError);
   }
 
-  function applyExtractedText(text){
-    var found = extractKeywordTags(text);
-    if(found.targets.length === 0 && found.categories.length === 0){
-      setUploadStatus('파일에서 일치하는 키워드를 찾지 못했어요. 필터를 직접 선택해보세요.');
-      return;
-    }
-    state.target = new Set(found.targets);
-    state.category = new Set(found.categories);
-    renderFilters();
-    renderResults();
-    setUploadStatus('찾은 키워드: ' + found.targets.concat(found.categories).join(', ') + ' — 필터에 반영했어요.');
+  // ---------- Best-effort field guessing from extracted text ----------
+  function guessTitle(text){
+    var lines = (text || '').split(/\n+/).map(function(l){ return l.trim(); }).filter(function(l){ return l.length >= 4; });
+    return lines.length ? lines[0].slice(0, 120) : '';
   }
+  function normalizeDateStr(s){
+    var m = s.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+    if(!m) return null;
+    var mo = ('0' + m[2]).slice(-2), d = ('0' + m[3]).slice(-2);
+    return m[1] + '-' + mo + '-' + d;
+  }
+  function guessDateRange(text){
+    var matches = (text || '').match(/\d{4}[.\-\/]\d{1,2}[.\-\/]\d{1,2}/g) || [];
+    var norm = matches.map(normalizeDateStr).filter(Boolean);
+    return { start: norm[0] || '', end: norm[1] || '' };
+  }
+  function guessUrl(text){
+    var m = (text || '').match(/https?:\/\/[^\s"'<>]+/);
+    return m ? m[0].replace(/[),.]+$/, '') : '';
+  }
+
+  // ---------- Review-and-submit form ----------
+  var reviewState = { target: new Set(), category: new Set() };
+
+  function buildRvChips(container, metaList, key){
+    container.innerHTML = metaList.map(function(m){
+      var tag = m[0];
+      var on = reviewState[key].has(tag);
+      return '<button type="button" class="rv-chip' + (on ? ' on' : '') + '" data-key="' + key + '" data-tag="' + tag + '">' + tag + '</button>';
+    }).join('');
+  }
+  function renderRvChips(){
+    buildRvChips(document.getElementById('rvTargetChips'), TARGET_META, 'target');
+    buildRvChips(document.getElementById('rvCategoryChips'), CATEGORY_META, 'category');
+  }
+  document.getElementById('reviewForm').addEventListener('click', function(e){
+    var chip = e.target.closest('.rv-chip');
+    if(!chip) return;
+    var key = chip.getAttribute('data-key'), tag = chip.getAttribute('data-tag');
+    if(reviewState[key].has(tag)) reviewState[key]['delete'](tag); else reviewState[key].add(tag);
+    renderRvChips();
+  });
+
+  function showReviewForm(text){
+    var found = extractKeywordTags(text);
+    reviewState.target = new Set(found.targets);
+    reviewState.category = new Set(found.categories);
+    var dates = guessDateRange(text);
+    document.getElementById('rvTitle').value = guessTitle(text);
+    document.getElementById('rvOrg').value = '';
+    document.getElementById('rvUrl').value = guessUrl(text);
+    document.getElementById('rvStart').value = dates.start;
+    document.getElementById('rvEnd').value = dates.end;
+    renderRvChips();
+    document.getElementById('reviewForm').hidden = false;
+    setUploadStatus('내용을 불러왔어요. 아래에서 확인하고 등록해주세요.');
+  }
+
+  document.getElementById('rvCancel').addEventListener('click', function(){
+    document.getElementById('reviewForm').hidden = true;
+    uploadStatusEl.hidden = true;
+  });
+
+  document.getElementById('rvSubmit').addEventListener('click', function(){
+    var title = document.getElementById('rvTitle').value.trim();
+    var org = document.getElementById('rvOrg').value.trim();
+    var url = document.getElementById('rvUrl').value.trim();
+    var start = document.getElementById('rvStart').value;
+    var end = document.getElementById('rvEnd').value;
+
+    if(!title){ setUploadStatus('사업명을 입력해주세요.', true); return; }
+    if(!start || !end){ setUploadStatus('접수 시작·종료일을 모두 입력해주세요.', true); return; }
+    if(start > end){ setUploadStatus('접수 종료일이 시작일보다 빠를 수 없어요.', true); return; }
+
+    setUploadStatus('등록하고 있어요…');
+    fetch('/api/programs', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        title: title, org: org, url: url, start: start, end: end,
+        target: Array.from(reviewState.target), category: Array.from(reviewState.category)
+      })
+    }).then(function(res){
+      if(!res.ok) throw new Error('bad_status');
+      return res.json();
+    }).then(function(){
+      document.getElementById('reviewForm').hidden = true;
+      setUploadStatus('등록됐어요! 목록에 반영했어요.');
+      loadUserPrograms();
+    }).catch(function(){
+      setUploadStatus('등록에 실패했어요. 이 페이지가 snwc.netlify.app 에서 열려 있는지 확인해주세요.', true);
+    });
+  });
+
+  function loadUserPrograms(){
+    fetch('/api/programs').then(function(res){
+      return res.ok ? res.json() : [];
+    }).then(function(list){
+      if(!Array.isArray(list)) return;
+      var withoutUser = PROGRAMS.filter(function(p){ return p.source !== 'user'; });
+      list.forEach(function(u){
+        withoutUser.push({
+          source: 'user',
+          title: u.title, org: u.org, url: u.url,
+          start: u.start, end: u.end,
+          target: Array.isArray(u.target) ? u.target : [],
+          category: Array.isArray(u.category) ? u.category : []
+        });
+      });
+      PROGRAMS = withoutUser;
+      PROGRAMS.forEach(function(p, i){ p.id = i; });
+      openPrograms = PROGRAMS.filter(function(p){ return isOpen(p, today); });
+      document.getElementById('nowLabel').textContent = openPrograms.length + '건';
+      renderFilters();
+      renderResults();
+    }).catch(function(){ /* static list stays as-is */ });
+  }
+  loadUserPrograms();
 
   document.getElementById('fileInput').addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
@@ -991,7 +1147,7 @@
 
     setUploadStatus((isPdf ? 'PDF' : '이미지') + '를 분석하고 있어요…');
     var extract = isPdf ? extractPdfText(file) : extractImageText(file);
-    extract.then(applyExtractedText).catch(function(){
+    extract.then(showReviewForm).catch(function(){
       setUploadStatus('파일을 읽는 중 문제가 발생했어요. 다른 파일로 시도해보세요.', true);
     });
   });
@@ -1010,7 +1166,7 @@
       var file = imageItem.getAsFile();
       pasteBox.textContent = '';
       setUploadStatus('붙여넣은 이미지를 분석하고 있어요…');
-      extractImageText(file).then(applyExtractedText).catch(function(){
+      extractImageText(file).then(showReviewForm).catch(function(){
         setUploadStatus('이미지를 읽는 중 문제가 발생했어요.', true);
       });
       return;
@@ -1019,7 +1175,7 @@
     pasteBox.textContent = '';
     if(text && text.trim()){
       setUploadStatus('붙여넣은 텍스트를 분석하고 있어요…');
-      applyExtractedText(text);
+      showReviewForm(text);
     } else {
       setUploadStatus('붙여넣은 내용이 비어있어요.', true);
     }
@@ -1031,7 +1187,7 @@
       pasteBox.textContent = '';
       if(text){
         setUploadStatus('입력한 내용을 분석하고 있어요…');
-        applyExtractedText(text);
+        showReviewForm(text);
       }
     }
   });
