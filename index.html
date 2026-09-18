@@ -307,8 +307,18 @@
   .pill svg{ width:11px; height:11px; }
   .pill.cat{ background: transparent; border:1px solid var(--accent); color:var(--accent); }
 
+  .card-actions{ display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:6px; }
+
+  .share-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:999px; flex:none;
+    background: var(--fill); color: var(--ink-dim);
+    transition: transform .12s, background .12s;
+  }
+  .share-btn:active{ transform: scale(0.9); background: var(--fill-2); }
+  .share-btn svg{ width:15px; height:15px; }
+
   .card-cta{
-    margin-top:6px; align-self:flex-end;
     display:inline-flex; align-items:center; gap:5px;
     background: var(--accent); color:#fff;
     font-size:12.5px; font-weight:700;
@@ -316,6 +326,15 @@
   }
   .card-cta:active{ opacity:.75; }
   .card-cta svg{ width:12px; height:12px; }
+
+  .toast{
+    position:fixed; left:50%; bottom:28px; transform:translate(-50%,10px);
+    background: var(--ink); color: var(--bg);
+    padding:10px 16px; border-radius:999px; font-size:13px; font-weight:600;
+    opacity:0; transition: opacity .2s, transform .2s; z-index:70; pointer-events:none;
+    box-shadow: var(--shadow-lg); white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
 
   .empty{
     padding: 52px 20px; text-align:center; color:var(--ink-dim);
@@ -459,7 +478,8 @@
     dots: '<circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
     check: '<polyline points="4,12.5 9.5,18 20,6"/>',
     clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.3 2"/>',
-    arrowUpRight: '<path d="M7 17 17 7"/><path d="M9.5 7H17v7.5"/>'
+    arrowUpRight: '<path d="M7 17 17 7"/><path d="M9.5 7H17v7.5"/>',
+    share: '<path d="M12 15V4"/><polyline points="8,8 12,4 16,8"/><path d="M5 12.5v5.8A1.7 1.7 0 0 0 6.7 20h10.6a1.7 1.7 0 0 0 1.7-1.7v-5.8"/>'
   };
   function ic(name, extraCls){ return '<svg class="ic' + (extraCls?(' '+extraCls):'') + '" viewBox="0 0 24 24">' + ICONS[name] + '</svg>'; }
 
@@ -635,6 +655,38 @@
   var TARGET_ICON = {}; TARGET_META.forEach(function(m){ TARGET_ICON[m[0]] = m[1]; });
   var CATEGORY_ICON = {}; CATEGORY_META.forEach(function(m){ CATEGORY_ICON[m[0]] = m[1]; });
 
+  var currentList = [];
+
+  function showToast(msg){
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.classList.add('show'); });
+    setTimeout(function(){
+      t.classList.remove('show');
+      setTimeout(function(){ t.remove(); }, 250);
+    }, 1800);
+  }
+
+  function shareProgram(p){
+    var shareText = SOURCES[p.source] + " · " + periodLabel(p);
+    if(navigator.share){
+      navigator.share({ title: p.title, text: shareText, url: p.url }).catch(function(){});
+      return;
+    }
+    var full = p.title + "\n" + shareText + "\n" + p.url;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(full).then(function(){
+        showToast("공고 링크를 복사했어요");
+      }).catch(function(){
+        showToast("복사에 실패했어요");
+      });
+    } else {
+      showToast("이 브라우저는 공유를 지원하지 않아요");
+    }
+  }
+
   function renderResults(){
     var list = openPrograms.filter(matches);
     if(state.sort === "deadline"){
@@ -642,6 +694,7 @@
     } else {
       list = list.slice().sort(function(a,b){ return a.id - b.id; });
     }
+    currentList = list;
 
     document.getElementById("countNum").textContent = list.length;
     var cards = document.getElementById("cards");
@@ -654,7 +707,7 @@
     }
     empty.hidden = true;
 
-    cards.innerHTML = list.map(function(p){
+    cards.innerHTML = list.map(function(p, idx){
       var dd = ddayInfo(p);
       var pillsHtml = p.target.map(function(t){
         return '<span class="pill">' + ic(TARGET_ICON[t]) + t + '</span>';
@@ -674,13 +727,24 @@
         '<div class="card-org">' + p.org + '</div>' +
         '<div class="card-period tabular">' + periodLabel(p) + '</div>' +
         (pillsHtml ? '<div class="pills">' + pillsHtml + '</div>' : '') +
-        '<a class="card-cta" href="' + p.url + '" target="_blank" rel="noopener">공고 보기' + ic('arrowUpRight') + '</a>' +
+        '<div class="card-actions">' +
+          '<button type="button" class="share-btn" data-idx="' + idx + '" aria-label="공유">' + ic('share') + '</button>' +
+          '<a class="card-cta" href="' + p.url + '" target="_blank" rel="noopener">공고 보기' + ic('arrowUpRight') + '</a>' +
+        '</div>' +
       '</article>';
     }).join('');
   }
 
   renderFilters();
   renderResults();
+
+  document.getElementById("cards").addEventListener('click', function(e){
+    var btn = e.target.closest('.share-btn');
+    if(!btn) return;
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+    var p = currentList[idx];
+    if(p) shareProgram(p);
+  });
 
   document.getElementById("sortSeg").addEventListener('click', function(e){
     var btn = e.target.closest('.seg-btn');
