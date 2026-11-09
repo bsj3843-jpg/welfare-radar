@@ -541,7 +541,7 @@
 </div>
 
 <script>
-  var LAST_UPDATED = "2026-11-05";
+  var LAST_UPDATED = "2026-11-09";
   var API_BASE = "https://snwc.netlify.app";
 
   var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", user: "직원 등록" };
@@ -582,27 +582,27 @@
   ];
 
   var PROGRAMS = [
+    {source:"kpang", title:"2027 열매지구돌봄 프로젝트 참여기관 모집", org:"(사)에코나우", url:"https://kpang.kr/2026110902/", start:"2026-11-02", end:"2026-11-20", target:[], category:["기타"]},
+    {source:"kpang", title:"배움ON, 미래UP! 디지털 학습환경 지원사업", org:"사단법인 정해복지", url:"https://kpang.kr/2026110901/", start:"2026-11-09", end:"2026-11-11", target:["아동","청소년"], category:["교육비"]},
+    {source:"kpang", title:"선생님과 아동이 함께하는 감사·존중 프로젝트「주황 조끼, 예쁜 말 대작전!」", org:"사단법인 해피기버·도서출판 가문비어린이", url:"https://kpang.kr/2026110604-2/", start:"2026-11-06", end:"2026-11-25", target:["아동"], category:["심리정서지원"]},
+    {source:"kpang", title:"2026년 재단법인 빛이나 여성용품 지원사업", org:"재단법인 빛이나", url:"https://kpang.kr/2026110604/", start:"2026-11-06", end:"2026-11-29", target:[], category:["물품지원"]},
+    {source:"kpang", title:"JB금융그룹 다다 비전스쿨 대학생 멘토 2기 모집", org:"JB금융그룹·아이들과미래재단", url:"https://kpang.kr/2026110603/", start:"2026-11-04", end:"2026-11-17", target:["청년"], category:["기타"]},
+    {source:"kpang", title:"2026 볼보 장애어린이 보조기기 지원사업", org:"푸르메재단", url:"https://kpang.kr/2026110602/", start:"2026-11-05", end:"2026-12-18", target:["아동","장애인"], category:["의료비"]},
+    {source:"kpang", title:"(사)김제동과어깨동무 2026년 청소년 보호시설 맞춤 겨울나기 지원사업 공고", org:"(사)김제동과어깨동무", url:"https://kpang.kr/2026110601/", start:"2026-11-06", end:"2026-11-16", target:["청소년"], category:["물품지원"]},
     {source:"kpang", title:"(재)월정어린이복지재단 아동복지 지원 공모 사업", org:"(재)월정어린이복지재단", url:"https://kpang.kr/2026110402/", start:"2026-11-11", end:"2026-11-25", target:["아동"], category:["생계비"]},
-    {source:"kpang", title:"(재)월정어린이복지재단 월정 산타가 간다 공모", org:"(재)월정어린이복지재단", url:"https://kpang.kr/2026110401/", start:"2026-11-01", end:"2026-11-11", target:["아동"], category:["물품지원"]},
-    {source:"kpang", title:"[서울] 아동학대 예방 가족 성장 지원 사업 참여자 모집", org:"사단법인 해피기버", url:"https://kpang.kr/2026110304/", start:"2026-11-03", end:"2026-11-06", target:["아동","청소년","위기가정"], category:["심리정서지원"]},
     {source:"kpang", title:"2026년 여성한부모 '내 일(job)을 더 새롭게' 맞춤형 자립지원 '커리어업' 대상자 2차 모집", org:"신한은행", url:"https://kpang.kr/2026110303-2/", start:"2026-11-02", end:"2026-11-18", target:["한부모"], category:["자립지원"]},
     {source:"kpang", title:"[서울,인천,경기] 2026년 한부모여성 재기지원사업", org:"한국미혼모가족협회", url:"https://kpang.kr/2026110302/", start:"2026-11-02", end:"2026-11-20", target:["한부모","위기가정"], category:["자립지원","위기긴급지원"]},
     {source:"kpang", title:"[충남] 2027년 사회복지공동모금회 차량지원사업", org:"사회복지공동모금회", url:"https://kpang.kr/2026110303/", start:"2026-11-02", end:"2026-11-30", target:[], category:["기타"]},
     {source:"kpang", title:"이맘클래스 신규 강사 양성 지원사업", org:"동방사회복지회", url:"https://kpang.kr/2026110202/", start:"2026-10-29", end:"2026-11-15", target:["한부모"], category:["자립지원"]},
-    {source:"kpang", title:"2026년 4분기 「나눔의 숲 캠프」 참가 단체 수시모집(2차)", org:"국립나주숲체원", url:"https://kpang.kr/2026110201/", start:"2026-11-02", end:"2026-11-05", target:["장애인"], category:["기타"]},
     {source:"kpang", title:"[서울/포항] AIP안심주거지원사업", org:"포스코1%나눔재단 X 따뜻한동행", url:"https://kpang.kr/2026103002/", start:"2026-10-27", end:"2026-11-10", target:["노인","장애인"], category:["주거비"]},
     {source:"kpang", title:"2026년 KB캐피탈 위기임산부·아동 양육 첫걸음 지원사업 협력기관 모집", org:"세이브더칠드런", url:"https://kpang.kr/2026103001/", start:"2026-10-30", end:"2026-11-18", target:["아동","위기가정"], category:["생계비","위기긴급지원"]},
     {source:"kpang", title:"2026년 포스코 희망이음 산재근로자 가족 긴급 생계지원 사업", org:"초록우산", url:"https://kpang.kr/2026102903/", start:"2026-08-01", end:"2026-12-10", target:["위기가정"], category:["생계비","위기긴급지원"]},
     {source:"kpang", title:"파킨슨·루게릭 환자 의료비 지원사업", org:"밀알복지재단", url:"https://kpang.kr/2026102902/", start:"2026-11-01", end:"2026-11-13", target:[], category:["의료비"]},
     {source:"kpang", title:"2026년 JDC 복지시설 친환경 특장차량(전기차) 지원사업", org:"제주사회복지공동모금회", url:"https://kpang.kr/2026102901/", start:"2026-10-28", end:"2026-11-27", target:[], category:["기타"]},
     {source:"kpang", title:"2026년 신선과일 지원사업 「사과는 사랑을 싣고」", org:"우양재단", url:"https://kpang.kr/2026102804/", start:"2026-10-27", end:"2026-11-15", target:["아동"], category:["물품지원"]},
-    {source:"kpang", title:"[서울,인천,경기] 오픈월드 생계비 지원사업(2027) 대상자 모집 안내", org:"사단법인 오픈월드", url:"https://kpang.kr/2026102803/", start:"2026-10-27", end:"2026-11-05", target:["아동"], category:["생계비"]},
     {source:"kpang", title:"[전북] 2027년 기획 사회복지기관 디지털 업무전환 함께열매 지원사업", org:"사랑의열매 사회복지공동모금회", url:"https://kpang.kr/2026102801/", start:"2026-10-26", end:"2026-11-12", target:[], category:["기타"]},
-    {source:"kpang", title:"2026 사회연대경제 「먹거리 으뜸 경연대회」 참여기업 모집", org:"신한금융희망재단", url:"https://kpang.kr/2026102704/", start:"2026-10-26", end:"2026-11-05", target:[], category:["기타"]},
     {source:"kpang", title:"희망둥지SOS 위기아동가정긴급지원사업", org:"희망친구 기아대책", url:"https://kpang.kr/2026102703/", start:"2026-10-25", end:"2026-11-15", target:["아동","위기가정"], category:["위기긴급지원"]},
-    {source:"kpang", title:"독거 어르신 즉석밥(햇반) 지원사업", org:"우양재단", url:"https://kpang.kr/2026102702/", start:"2026-10-26", end:"2026-11-06", target:["노인"], category:["물품지원"]},
     {source:"kpang", title:"2027년 아동·청소년 특기적성교육지원사업 3기 참여자 모집", org:"열매나눔재단", url:"https://kpang.kr/2026102701/", start:"2026-09-21", end:"2026-11-13", target:["청소년"], category:["교육비"]},
-    {source:"kpang", title:"2026년 전국 탈북민 제철먹거리 고구마 지원사업 신청 안내(하나센터 대상)", org:"우양재단", url:"https://kpang.kr/2026102602/", start:"2026-10-23", end:"2026-11-06", target:["다문화"], category:["물품지원"]},
     {source:"kpang", title:"2026년 아동 기저귀 및 생필품 정기 지원사업", org:"사회적협동조합 돌고도네이션", url:"https://kpang.kr/2026102601/", start:"2026-11-02", end:"2099-12-31", target:["아동"], category:["물품지원"]},
     {source:"kpang", title:"아동·청소년 인공달팽이관 수술 및 외부장치 교체 지원사업", org:"우리금융미래재단·사랑의달팽이", url:"https://kpang.kr/2026102302/", start:"2026-10-23", end:"2099-12-31", target:["아동","청소년","장애인"], category:["의료비"]},
     {source:"kpang", title:"2027년 초록우산 아이리더 모집", org:"초록우산", url:"https://kpang.kr/2026102202/", start:"2026-10-21", end:"2026-11-13", target:["아동"], category:["교육비"]},
