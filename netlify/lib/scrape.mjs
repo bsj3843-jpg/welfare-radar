@@ -24,7 +24,7 @@ async function get(url, init, timeoutMs) {
   }
 }
 
-async function pool(items, limit, fn) {
+async function pool(items, limit, fn, errors) {
   const out = new Array(items.length).fill(null);
   let next = 0;
   const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
@@ -34,6 +34,7 @@ async function pool(items, limit, fn) {
         out[k] = await fn(items[k]);
       } catch (e) {
         out[k] = null;
+        if (errors) errors.push(String((e && e.message) || e));
       }
     }
   });
@@ -183,6 +184,7 @@ async function scrapeKpang(today, ctx) {
       [...listHtml.matchAll(/<h3 class="elementor-post__title">\s*<a href="(https:\/\/kpang\.kr\/\d{8,12}\/?)"/g)].map((m) => m[1])
     ),
   ].slice(0, 30);
+  if (!links.length) throw new Error("kpang: no posts found. len=" + listHtml.length + " " + clean(listHtml).slice(0, 140));
   const items = await pool(links, 10, async (url) => {
     const known = ctx.known[url];
     const fresh = known && known.fetchedAt && daysBetween(today, known.fetchedAt) < 2;
@@ -298,10 +300,23 @@ function stripOrgPrefix(title, org) {
 
 async function scrapeKaswc(today, ctx) {
   const pages = [1, 2, 3, 4, 5, 6];
-  const lists = await pool(pages, 6, async (n) => {
-    const url = n === 1 ? KASWC_BASE : KASWC_BASE + "/page/" + n;
-    return parseKaswcList(await (await get(url, null, Math.min(7000, ctx.timeLeft()))).text());
-  });
+  const pageErrors = [];
+  let firstSnippet = "";
+  const lists = await pool(
+    pages,
+    6,
+    async (n) => {
+      const url = n === 1 ? KASWC_BASE : KASWC_BASE + "/page/" + n;
+      const html = await (await get(url, null, Math.min(7000, ctx.timeLeft()))).text();
+      const parsed = parseKaswcList(html);
+      if (!parsed.length && !firstSnippet) firstSnippet = "len=" + html.length + " " + clean(html).slice(0, 140);
+      return parsed;
+    },
+    pageErrors
+  );
+  if (!lists.some((l) => l && l.length)) {
+    throw new Error("kaswc: no items parsed. " + (pageErrors[0] || firstSnippet || "unknown"));
+  }
   const seen = new Set();
   const open = [];
   for (const list of lists) {
