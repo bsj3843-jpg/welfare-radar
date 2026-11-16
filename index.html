@@ -99,7 +99,7 @@
 
   .navbar-actions{ display:flex; align-items:center; gap:8px; flex:none; }
 
-  .filter-btn, .install-btn{
+  .filter-btn, .install-btn, .refresh-btn{
     display:flex; align-items:center; gap:6px;
     padding: 10px 16px 10px 13px;
     background: var(--surface);
@@ -111,7 +111,14 @@
     box-shadow: var(--shadow);
     transition: transform .12s, box-shadow .12s;
   }
-  .filter-btn:active, .install-btn:active{ transform: scale(0.96); opacity:1; }
+  .filter-btn:active, .install-btn:active, .refresh-btn:active{ transform: scale(0.96); opacity:1; }
+  .refresh-btn:disabled{ opacity:.75; cursor:default; transform:none; }
+  .refresh-btn.loading svg{ animation: spin 0.9s linear infinite; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @media (max-width: 520px){
+    .refresh-btn span{ display:none; }
+    .refresh-btn{ padding:10px 12px; }
+  }
   .install-btn{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#fff; border-color:transparent; box-shadow: var(--shadow-accent); }
   .filter-btn .badge{
     background:var(--accent); color:#fff; font-size:10.5px; font-weight:800;
@@ -443,6 +450,10 @@
           <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="7,10.5 12,15.5 17,10.5"/><path d="M5 16.5v2.3a1.7 1.7 0 0 0 1.7 1.7h10.6a1.7 1.7 0 0 0 1.7-1.7v-2.3"/></svg>
           <span>설치</span>
         </button>
+        <button class="refresh-btn" id="refreshBtn" type="button" aria-label="새로고침">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><polyline points="20,4 20,9.5 14.5,9.5"/></svg>
+          <span id="refreshLabel">새로고침</span>
+        </button>
         <button class="filter-btn" id="filterBtn" type="button">
           <svg class="ic" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><circle cx="9" cy="7" r="2.1" fill="currentColor" stroke="none"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2.1" fill="currentColor" stroke="none"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="11" cy="17" r="2.1" fill="currentColor" stroke="none"/></svg>
           <span>필터</span>
@@ -637,6 +648,10 @@
   ];
 
   PROGRAMS.forEach(function(p, i){ p.id = i; });
+  var BASE_PROGRAMS = PROGRAMS.slice();
+  var scrapedItems = [];
+  var userItems = [];
+  var scrapedUpdatedAt = null;
 
   function parseDate(s){ var parts = s.split("-").map(Number); return new Date(parts[0], parts[1]-1, parts[2]); }
   function startOfToday(){ var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
@@ -648,22 +663,23 @@
   var openPrograms = PROGRAMS.filter(function(p){ return isOpen(p, today); });
 
   function programKey(p){ return p.source + "::" + p.url; }
-  (function markNewPrograms(){
-    var SEEN_KEY = "welfareRadarSeenKeys";
-    var seenKeys = null;
-    try {
-      var stored = localStorage.getItem(SEEN_KEY);
-      seenKeys = stored ? new Set(JSON.parse(stored)) : null;
-    } catch(e) { seenKeys = null; }
-    var isFirstVisit = (seenKeys === null);
-    if (isFirstVisit) seenKeys = new Set();
-    openPrograms.forEach(function(p){
-      p.isNew = !isFirstVisit && !seenKeys.has(programKey(p));
+  var SEEN_KEY = "welfareRadarSeenKeys";
+  var seenAtLoad = null;
+  try {
+    var storedSeen = localStorage.getItem(SEEN_KEY);
+    seenAtLoad = storedSeen ? new Set(JSON.parse(storedSeen)) : null;
+  } catch(e) { seenAtLoad = null; }
+  var firstVisit = (seenAtLoad === null);
+  function flagNew(){
+    var shared = openPrograms.filter(function(p){ return p.source !== 'user'; });
+    shared.forEach(function(p){
+      if (p.isNew === undefined) p.isNew = !firstVisit && !seenAtLoad.has(programKey(p));
     });
     try {
-      localStorage.setItem(SEEN_KEY, JSON.stringify(openPrograms.map(programKey)));
+      localStorage.setItem(SEEN_KEY, JSON.stringify(shared.map(programKey)));
     } catch(e) {}
-  })();
+  }
+  flagNew();
 
   document.getElementById("lastUpdated").textContent = LAST_UPDATED;
   document.getElementById("nowLabel").textContent = openPrograms.length + "건";
@@ -1107,30 +1123,112 @@
     });
   });
 
+  function rebuildPrograms(){
+    var seen = {};
+    var merged = [];
+    BASE_PROGRAMS.concat(scrapedItems).forEach(function(p){
+      var k = programKey(p);
+      if (seen[k]) return;
+      seen[k] = true;
+      merged.push(p);
+    });
+    PROGRAMS = merged.concat(userItems);
+    PROGRAMS.forEach(function(p, i){ p.id = i; });
+    openPrograms = PROGRAMS.filter(function(p){ return isOpen(p, today); });
+    flagNew();
+    document.getElementById('nowLabel').textContent = openPrograms.length + '건';
+    renderFilters();
+    renderResults();
+  }
+
   function loadUserPrograms(){
     fetch(API_BASE + '/api/programs').then(function(res){
       return res.ok ? res.json() : [];
     }).then(function(list){
       if(!Array.isArray(list)) return;
-      var withoutUser = PROGRAMS.filter(function(p){ return p.source !== 'user'; });
-      list.forEach(function(u){
-        withoutUser.push({
+      userItems = list.map(function(u){
+        return {
           source: 'user',
           title: u.title, org: u.org, url: u.url,
           start: u.start, end: u.end,
           target: Array.isArray(u.target) ? u.target : [],
           category: Array.isArray(u.category) ? u.category : []
-        });
+        };
       });
-      PROGRAMS = withoutUser;
-      PROGRAMS.forEach(function(p, i){ p.id = i; });
-      openPrograms = PROGRAMS.filter(function(p){ return isOpen(p, today); });
-      document.getElementById('nowLabel').textContent = openPrograms.length + '건';
-      renderFilters();
-      renderResults();
+      rebuildPrograms();
     }).catch(function(){ /* static list stays as-is */ });
   }
   loadUserPrograms();
+
+  var ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+  function updatedLabel(iso){
+    return new Date(Date.parse(iso) + 9 * 3600 * 1000).toISOString().slice(0, 16).replace('T', ' ');
+  }
+  function applyScraped(data){
+    scrapedUpdatedAt = data.updatedAt || null;
+    scrapedItems = (data.items || []).filter(function(p){
+      return p && typeof p.title === 'string' && typeof p.url === 'string' && ISO_DAY.test(p.start) && ISO_DAY.test(p.end);
+    }).map(function(p){
+      return {
+        source: p.source, title: p.title, org: p.org || '', url: p.url,
+        start: p.start, end: p.end,
+        target: Array.isArray(p.target) ? p.target : [],
+        category: Array.isArray(p.category) ? p.category : []
+      };
+    });
+    if (data.updatedAt && data.date >= LAST_UPDATED) {
+      document.getElementById('lastUpdated').textContent = updatedLabel(data.updatedAt);
+    }
+    rebuildPrograms();
+  }
+  function loadScraped(){
+    return fetch(API_BASE + '/api/scraped').then(function(res){
+      return res.ok ? res.json() : null;
+    }).then(function(data){
+      if (data && Array.isArray(data.items) && data.items.length) { applyScraped(data); return data; }
+      return null;
+    }).catch(function(){ return null; });
+  }
+  loadScraped();
+
+  var refreshBtn = document.getElementById('refreshBtn');
+  var refreshLabel = document.getElementById('refreshLabel');
+  function setRefreshing(on){
+    refreshBtn.disabled = on;
+    refreshBtn.classList.toggle('loading', on);
+    refreshLabel.textContent = on ? '수집 중…' : '새로고침';
+  }
+  function waitForOtherRefresh(before, tries){
+    return new Promise(function(resolve){
+      (function poll(n){
+        fetch(API_BASE + '/api/scraped').then(function(r){ return r.json(); }).then(function(d){
+          if (d.updatedAt && d.updatedAt !== before) return resolve();
+          if (n >= tries) return resolve();
+          setTimeout(function(){ poll(n + 1); }, 3000);
+        }).catch(function(){ resolve(); });
+      })(0);
+    });
+  }
+  refreshBtn.addEventListener('click', function(){
+    setRefreshing(true);
+    var before = scrapedUpdatedAt;
+    var beforeCount = openPrograms.length;
+    fetch(API_BASE + '/api/refresh', { method: 'POST' }).then(function(res){
+      if (res.status === 202) return waitForOtherRefresh(before, 10);
+      if (!res.ok) throw new Error('bad_status');
+      return res.json();
+    }).then(function(){
+      return loadScraped();
+    }).then(function(data){
+      setRefreshing(false);
+      if (!data) { showToast('수집 결과를 불러오지 못했어요'); return; }
+      var diff = openPrograms.length - beforeCount;
+      showToast(diff > 0 ? '새 공고 ' + diff + '건을 찾았어요' : '최신 상태예요 · 접수중 ' + openPrograms.length + '건');
+    }).catch(function(){
+      setRefreshing(false);
+      showToast('수집에 실패했어요. 잠시 후 다시 시도해주세요');
+    });
+  });
 
   document.getElementById('fileInput').addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];

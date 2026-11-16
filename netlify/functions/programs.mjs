@@ -35,7 +35,7 @@ export default async (req) => {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
-  const store = getStore(STORE_NAME);
+  const store = getStore({ name: STORE_NAME, consistency: "strong" });
 
   if (req.method === "GET") {
     const list = (await store.get(KEY, { type: "json" })) || [];
