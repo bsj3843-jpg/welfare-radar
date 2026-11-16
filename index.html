@@ -1223,7 +1223,9 @@
       setRefreshing(false);
       if (!data) { showToast('수집 결과를 불러오지 못했어요'); return; }
       var diff = openPrograms.length - beforeCount;
-      showToast(diff > 0 ? '새 공고 ' + diff + '건을 찾았어요' : '최신 상태예요 · 접수중 ' + openPrograms.length + '건');
+      var msg = diff > 0 ? '새 공고 ' + diff + '건을 찾았어요' : '최신 상태예요 · 접수중 ' + openPrograms.length + '건';
+      if (data.errors && data.errors.kaswc) msg += ' · 복지관협회는 매일 갱신';
+      showToast(msg);
     }).catch(function(){
       setRefreshing(false);
       showToast('수집에 실패했어요. 잠시 후 다시 시도해주세요');
