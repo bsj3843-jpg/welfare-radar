@@ -47,6 +47,11 @@ function decodeEntities(s) {
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)))
     .replace(/&nbsp;/g, " ")
+    .replace(/&middot;/g, "·")
+    .replace(/&hellip;/g, "…")
+    .replace(/&ndash;|&mdash;/g, "-")
+    .replace(/&[lr]squo;/g, "'")
+    .replace(/&[lr]dquo;/g, '"')
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
@@ -368,6 +373,17 @@ function htmlToLines(h) {
     .filter(Boolean);
 }
 
+const PERIOD_LABEL = /(신청|접수|모집|공모|제출)\s?(기간|기한|일정|마감)\s*[:：]?/;
+
+function findPeriod(lines, posted) {
+  for (const l of lines) {
+    if (!PERIOD_LABEL.test(l) || l.length > 200) continue;
+    const r = parseRange(l.slice(l.search(PERIOD_LABEL)).replace(PERIOD_LABEL, ""), posted);
+    if (r) return r;
+  }
+  return null;
+}
+
 function parseSaswcList(html) {
   return html
     .split("<tr")
@@ -386,10 +402,7 @@ function parseSaswcDetail(it, html) {
   const m = html.match(/<article>([\s\S]*?)<!--AfterDocument/);
   if (!m) return null;
   const lines = htmlToLines(m[1]);
-  const labelRe = /(신청|접수|모집|공모|제출)\s?(기간|기한)\s*[:：]?/;
-  const line = lines.find((l) => labelRe.test(l) && /\d/.test(l));
-  if (!line) return null;
-  const range = parseRange(line.slice(line.search(labelRe)).replace(labelRe, ""), it.posted);
+  const range = findPeriod(lines, it.posted);
   if (!range) return null;
 
   const tm = it.title.match(/^\[([^\]]+)\]\s*(.*)$/);
@@ -445,6 +458,100 @@ async function scrapeSaswc(today, ctx) {
   return items.filter((p) => p && p.end >= today);
 }
 
+/* ---------- Source E: bokji (한국사회복지협의회 복지넷 사업공모) ---------- */
+const BOKJI_LIST = "https://www.bokji.net/not/biz/01.bokji";
+const BOKJI_VIEW = "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=";
+
+function parseBokjiList(html) {
+  return html
+    .split("<tr")
+    .slice(1)
+    .map((r) => {
+      if (/class="notice"/.test(r)) return null;
+      const a = r.match(/goView\('(\d+)'\)">([\s\S]*?)<\/a>/);
+      const w = r.match(/<td class="writer">([\s\S]*?)<\/td>/);
+      const d = r.match(/<td class="date">(\d{4})-(\d{2})-(\d{2})<\/td>/);
+      if (!a || !d) return null;
+      return { id: a[1], title: clean(a[2]), org: w ? clean(w[1]) : "", posted: d[1] + "-" + d[2] + "-" + d[3] };
+    })
+    .filter(Boolean);
+}
+
+function titleEndHint(title, posted) {
+  const m = title.match(/~\s*(\d{1,2})\s*[\/.]\s*(\d{1,2})/);
+  if (!m) return null;
+  const mo = Number(m[1]);
+  const d = Number(m[2]);
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  let y = Number(posted.slice(0, 4));
+  let iso = toISO(y, mo, d);
+  if (iso < posted) iso = toISO(y + 1, mo, d);
+  return iso;
+}
+
+const BOKJI_CLOSED = /모집\s?완료|신청\s?완료|접수\s?완료|마감\s?되|조기\s?마감|마감\s?안내|종료\s?안내/;
+
+function parseBokjiDetail(it, html) {
+  const all = htmlToLines(html.split('class="boardFooter"')[0]);
+  const at = all.findIndex((l) => l.startsWith(it.title.slice(0, 15)));
+  const lines = at >= 0 ? all.slice(at + 2) : all;
+  if (BOKJI_CLOSED.test(it.title)) return null;
+  let range = findPeriod(lines, it.posted);
+  const hint = titleEndHint(it.title, it.posted);
+  if (hint && (!range || hint > range.end)) {
+    range = { start: range && range.start <= hint ? range.start : it.posted, end: hint };
+  }
+  if (!range) return null;
+
+  const tm = it.title.match(/^\[([^\]]+)\]\s*(.*)$/);
+  const title = (tm && tm[2] ? tm[2] : it.title).trim();
+  if (!title) return null;
+  const tags = classify(title + " " + lines.join(" ").slice(0, 700));
+  return {
+    source: "bokji",
+    title,
+    org: it.org,
+    url: BOKJI_VIEW + it.id,
+    start: range.start,
+    end: range.end,
+    target: tags.target,
+    category: tags.category,
+  };
+}
+
+async function scrapeBokji(today, ctx) {
+  const pageErrors = [];
+  const lists = await pool(
+    [1, 2, 3, 4, 5],
+    5,
+    async (n) => parseBokjiList(await (await get(BOKJI_LIST + "?PG=" + n, null, Math.min(7000, ctx.timeLeft()))).text()),
+    pageErrors
+  );
+  if (!lists.some((l) => l && l.length)) {
+    throw new Error("bokji: no items parsed. " + (pageErrors[0] || "unknown"));
+  }
+  const seen = new Set();
+  const cands = [];
+  for (const list of lists) {
+    for (const it of list || []) {
+      if (seen.has(it.id)) continue;
+      seen.add(it.id);
+      cands.push(it);
+    }
+  }
+  const items = await pool(cands, 10, async (it) => {
+    const url = BOKJI_VIEW + it.id;
+    const known = ctx.known[url];
+    if (known && known.fetchedAt && daysBetween(today, known.fetchedAt) < 2) return known;
+    if (ctx.timeLeft() < 1500) return known || null;
+    const html = await (await get(url, null, Math.min(6000, ctx.timeLeft()))).text();
+    const item = parseBokjiDetail(it, html);
+    if (item) item.fetchedAt = today;
+    return item;
+  });
+  return items.filter((p) => p && p.end >= today);
+}
+
 /* ---------- all sources ---------- */
 export async function scrapeAll(today, opts) {
   const day = today || todayKST();
@@ -454,7 +561,7 @@ export async function scrapeAll(today, opts) {
     known: (opts && opts.known) || {},
     timeLeft: () => budgetMs - (Date.now() - t0),
   };
-  const jobs = { kpang: scrapeKpang, holt: scrapeHolt, kaswc: scrapeKaswc, saswc: scrapeSaswc };
+  const jobs = { kpang: scrapeKpang, holt: scrapeHolt, kaswc: scrapeKaswc, saswc: scrapeSaswc, bokji: scrapeBokji };
   const names = Object.keys(jobs);
   const settled = await Promise.allSettled(names.map((n) => jobs[n](day, ctx)));
   const items = {};

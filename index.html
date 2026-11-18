@@ -443,7 +443,7 @@
     <div class="navbar-inner">
       <div class="title-block">
         <h1>지원사업 <span class="title-highlight">검색</span></h1>
-        <p class="subtitle">정보광장 · 홀트아동복지회 · 한국사회복지관협회 · 서울시사회복지관협회 공고를 모아 오늘 접수중인 사업만 보여줍니다.</p>
+        <p class="subtitle">정보광장 · 홀트아동복지회 · 한국사회복지관협회 · 서울시사회복지관협회 · 복지넷 공고를 모아 오늘 접수중인 사업만 보여줍니다.</p>
       </div>
       <div class="navbar-actions">
         <button class="install-btn" id="installBtn" type="button" hidden>
@@ -555,7 +555,7 @@
   var LAST_UPDATED = "2026-11-18";
   var API_BASE = "https://snwc.netlify.app";
 
-  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", saswc: "서울시사회복지관협회", user: "직원 등록" };
+  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", saswc: "서울시사회복지관협회", bokji: "복지넷", user: "직원 등록" };
 
   var ICONS = {
     child: '<circle cx="12" cy="9" r="3.2"/><path d="M6 20c.7-3.3 3-5 6-5s5.3 1.7 6 5"/>',
@@ -719,7 +719,7 @@
     return '<div class="f-section"><div class="f-section-title">' + title + '</div><div class="f-section-card">' + rows + '</div></div>';
   }
 
-  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"],["saswc","grid"],["user","grid"]];
+  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"],["saswc","grid"],["bokji","grid"],["user","grid"]];
 
   function filterPanelHTML(){
     return buildSection("대상층", TARGET_META, "target") +
@@ -1143,10 +1143,11 @@
   function orgKey(o){ return String(o || '').replace(/\s+/g, '').replace(/사단법인|재단법인|사회복지법인|\(.*?\)/g, ''); }
   function isDuplicate(a, b){
     if (a.source === b.source || a.end !== b.end || isRolling(a)) return false;
-    var oa = orgKey(a.org);
-    if (!oa || oa !== orgKey(b.org)) return false;
+    var oa = orgKey(a.org), ob = orgKey(b.org);
+    if (oa.length < 2 || ob.length < 2 || (oa.indexOf(ob) === -1 && ob.indexOf(oa) === -1)) return false;
     var tb = titleTokens(b.title);
-    return titleTokens(a.title).filter(function(w){ return tb.indexOf(w) !== -1; }).length >= 2;
+    var shared = titleTokens(a.title).filter(function(w){ return tb.indexOf(w) !== -1; });
+    return shared.length >= 2 || shared.some(function(w){ return w.length >= 4; });
   }
 
   function rebuildPrograms(){
