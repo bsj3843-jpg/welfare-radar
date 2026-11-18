@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-18T03:13:54.219Z",
+ "updatedAt": "2026-11-18T06:17:20.967Z",
  "date": "2026-11-18",
  "items": [
   {
@@ -289,6 +289,20 @@
    "category": [
     "교육비",
     "위기긴급지원"
+   ],
+   "fetchedAt": "2026-11-18"
+  },
+  {
+   "source": "bokji",
+   "title": "AI 아카데미 10기(서울) 교육생 모집(~11/25)",
+   "org": "동그라미재단",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33254",
+   "start": "2026-11-18",
+   "end": "2026-11-25",
+   "target": [],
+   "category": [
+    "교육비",
+    "자립지원"
    ],
    "fetchedAt": "2026-11-18"
   },
