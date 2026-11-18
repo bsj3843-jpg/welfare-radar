@@ -443,7 +443,7 @@
     <div class="navbar-inner">
       <div class="title-block">
         <h1>지원사업 <span class="title-highlight">검색</span></h1>
-        <p class="subtitle">정보광장 · 홀트아동복지회 · 한국사회복지관협회 공고를 모아 오늘 접수중인 사업만 보여줍니다.</p>
+        <p class="subtitle">정보광장 · 홀트아동복지회 · 한국사회복지관협회 · 서울시사회복지관협회 공고를 모아 오늘 접수중인 사업만 보여줍니다.</p>
       </div>
       <div class="navbar-actions">
         <button class="install-btn" id="installBtn" type="button" hidden>
@@ -555,7 +555,7 @@
   var LAST_UPDATED = "2026-11-18";
   var API_BASE = "https://snwc.netlify.app";
 
-  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", user: "직원 등록" };
+  var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", saswc: "서울시사회복지관협회", user: "직원 등록" };
 
   var ICONS = {
     child: '<circle cx="12" cy="9" r="3.2"/><path d="M6 20c.7-3.3 3-5 6-5s5.3 1.7 6 5"/>',
@@ -653,7 +653,9 @@
     {source:"kaswc", title:"2026년 위기가정 지원사업 「위기의 순간, 신한과 함께」", org:"사회복지법인 굿네이버스", url:"https://share.kaswc.or.kr/info2/7673", start:"2026-03-01", end:"2026-11-30", target:["위기가정"], category:["위기긴급지원"]},
     {source:"kaswc", title:"IBK와 함께하는 중소기업 맞춤형지원사업 신청", org:"대한사회복지회", url:"https://share.kaswc.or.kr/info2/7309", start:"2025-10-01", end:"2026-12-31", target:[], category:["기타"]},
     {source:"kaswc", title:"2026년 함께하는 사랑밭 『위기가정 희망지원사업』 안내", org:"함께하는 사랑밭", url:"https://share.kaswc.or.kr/info2/7012", start:"2026-02-13", end:"2026-12-31", target:["위기가정"], category:["위기긴급지원"]},
-    {source:"kaswc", title:"2026년 굿피플 방송 및 온라인 모금 사례 안내문", org:"굿피플인터내셔널", url:"https://share.kaswc.or.kr/info2/6957", start:"2026-01-01", end:"2026-12-31", target:[], category:["기타"]}
+    {source:"kaswc", title:"2026년 굿피플 방송 및 온라인 모금 사례 안내문", org:"굿피플인터내셔널", url:"https://share.kaswc.or.kr/info2/6957", start:"2026-01-01", end:"2026-12-31", target:[], category:["기타"]},
+    {source:"saswc", title:"2027 열매지구돌봄 프로젝트 모집 안내", org:"사단법인 에코나우", url:"https://www.saswc.org/support/289112", start:"2026-11-02", end:"2026-11-20", target:[], category:["기타"]},
+    {source:"saswc", title:"2026년 위기아동지원사업 신청 안내", org:"세이브더칠드런", url:"https://www.saswc.org/support/289094", start:"2026-11-06", end:"2099-12-31", target:["아동"], category:["생계비","교육비","주거비","의료비"]}
   ];
 
   PROGRAMS.forEach(function(p, i){ p.id = i; });
@@ -717,7 +719,7 @@
     return '<div class="f-section"><div class="f-section-title">' + title + '</div><div class="f-section-card">' + rows + '</div></div>';
   }
 
-  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"],["user","grid"]];
+  var SOURCE_META = [["kpang","grid"],["holt","grid"],["kaswc","grid"],["saswc","grid"],["user","grid"]];
 
   function filterPanelHTML(){
     return buildSection("대상층", TARGET_META, "target") +
@@ -1132,6 +1134,21 @@
     });
   });
 
+  var TITLE_STOP = /^(지원사업|공모사업|공모|모집|안내|신청|지원|사업|참여|기관|대상|프로젝트)$/;
+  function titleTokens(t){
+    return String(t || '').replace(/[「」『』\[\]()（）<>＜＞'"“”‘’·,.]/g, ' ').split(/\s+/).filter(function(w){
+      return w.length >= 2 && !/^\d+년?$/.test(w) && !TITLE_STOP.test(w);
+    });
+  }
+  function orgKey(o){ return String(o || '').replace(/\s+/g, '').replace(/사단법인|재단법인|사회복지법인|\(.*?\)/g, ''); }
+  function isDuplicate(a, b){
+    if (a.source === b.source || a.end !== b.end || isRolling(a)) return false;
+    var oa = orgKey(a.org);
+    if (!oa || oa !== orgKey(b.org)) return false;
+    var tb = titleTokens(b.title);
+    return titleTokens(a.title).filter(function(w){ return tb.indexOf(w) !== -1; }).length >= 2;
+  }
+
   function rebuildPrograms(){
     var seen = {};
     var merged = [];
@@ -1139,6 +1156,7 @@
       var k = programKey(p);
       if (seen[k]) return;
       seen[k] = true;
+      if (merged.some(function(q){ return isDuplicate(q, p); })) return;
       merged.push(p);
     });
     PROGRAMS = merged.concat(userItems);

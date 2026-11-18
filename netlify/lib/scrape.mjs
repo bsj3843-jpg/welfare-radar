@@ -351,6 +351,100 @@ async function scrapeKaswc(today, ctx) {
   });
 }
 
+/* ---------- Source D: saswc (서울시사회복지관협회) ---------- */
+const SASWC_BASE = "https://www.saswc.org/support";
+const SASWC_EXCLUDE = /포럼|토론회|세미나|학술|심포지엄|컨퍼런스|콘퍼런스|워크숍|워크샵|설명회|행사|교육|강좌|강사|양성|특강|공연|티켓|채용|구인|간담회|공청회|연수/;
+const SASWC_INCLUDE = /지원|공모|모집|후원|장학|신청|제안/;
+
+function htmlToLines(h) {
+  return decodeEntities(
+    h
+      .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<br\s*\/?>|<\/(p|li|div|tr|h\d)>/gi, "\n")
+      .replace(/<[^>]+>/g, " ")
+  )
+    .split("\n")
+    .map((l) => l.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+}
+
+function parseSaswcList(html) {
+  return html
+    .split("<tr")
+    .slice(1)
+    .map((r) => {
+      if (/class="notice"/.test(r)) return null;
+      const a = r.match(/<a href="\/support\/(\d+)"[^>]*>([\s\S]*?)<\/a>/);
+      const t = r.match(/<td class="time"[^>]*>(\d{4})\.(\d{2})\.(\d{2})<\/td>/);
+      if (!a || !t) return null;
+      return { id: a[1], title: clean(a[2]), posted: t[1] + "-" + t[2] + "-" + t[3] };
+    })
+    .filter(Boolean);
+}
+
+function parseSaswcDetail(it, html) {
+  const m = html.match(/<article>([\s\S]*?)<!--AfterDocument/);
+  if (!m) return null;
+  const lines = htmlToLines(m[1]);
+  const labelRe = /(신청|접수|모집|공모|제출)\s?(기간|기한)\s*[:：]?/;
+  const line = lines.find((l) => labelRe.test(l) && /\d/.test(l));
+  if (!line) return null;
+  const range = parseRange(line.slice(line.search(labelRe)).replace(labelRe, ""), it.posted);
+  if (!range) return null;
+
+  const tm = it.title.match(/^\[([^\]]+)\]\s*(.*)$/);
+  const org = tm ? tm[1].trim() : "";
+  const title = (tm ? tm[2] : it.title).trim();
+  if (!title) return null;
+  const tags = classify(title + " " + lines.join(" ").slice(0, 600));
+  return {
+    source: "saswc",
+    title,
+    org,
+    url: SASWC_BASE + "/" + it.id,
+    start: range.start,
+    end: range.end,
+    target: tags.target,
+    category: tags.category,
+  };
+}
+
+async function scrapeSaswc(today, ctx) {
+  const pageErrors = [];
+  const lists = await pool(
+    [1, 2, 3],
+    3,
+    async (n) => {
+      const url = n === 1 ? SASWC_BASE : SASWC_BASE + "?page=" + n;
+      return parseSaswcList(await (await get(url, null, Math.min(7000, ctx.timeLeft()))).text());
+    },
+    pageErrors
+  );
+  if (!lists.some((l) => l && l.length)) {
+    throw new Error("saswc: no items parsed. " + (pageErrors[0] || "unknown"));
+  }
+  const seen = new Set();
+  const cands = [];
+  for (const list of lists) {
+    for (const it of list || []) {
+      if (seen.has(it.id)) continue;
+      seen.add(it.id);
+      if (SASWC_INCLUDE.test(it.title) && !SASWC_EXCLUDE.test(it.title)) cands.push(it);
+    }
+  }
+  const items = await pool(cands, 10, async (it) => {
+    const url = SASWC_BASE + "/" + it.id;
+    const known = ctx.known[url];
+    if (known && known.fetchedAt && daysBetween(today, known.fetchedAt) < 2) return known;
+    if (ctx.timeLeft() < 1500) return known || null;
+    const html = await (await get(url, null, Math.min(6000, ctx.timeLeft()))).text();
+    const item = parseSaswcDetail(it, html);
+    if (item) item.fetchedAt = today;
+    return item;
+  });
+  return items.filter((p) => p && p.end >= today);
+}
+
 /* ---------- all sources ---------- */
 export async function scrapeAll(today, opts) {
   const day = today || todayKST();
@@ -360,7 +454,7 @@ export async function scrapeAll(today, opts) {
     known: (opts && opts.known) || {},
     timeLeft: () => budgetMs - (Date.now() - t0),
   };
-  const jobs = { kpang: scrapeKpang, holt: scrapeHolt, kaswc: scrapeKaswc };
+  const jobs = { kpang: scrapeKpang, holt: scrapeHolt, kaswc: scrapeKaswc, saswc: scrapeSaswc };
   const names = Object.keys(jobs);
   const settled = await Promise.allSettled(names.map((n) => jobs[n](day, ctx)));
   const items = {};
