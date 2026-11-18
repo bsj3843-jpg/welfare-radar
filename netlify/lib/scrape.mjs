@@ -524,7 +524,7 @@ async function scrapeBokji(today, ctx) {
   const lists = await pool(
     [1, 2, 3, 4, 5],
     5,
-    async (n) => parseBokjiList(await (await get(BOKJI_LIST + "?PG=" + n, null, Math.min(7000, ctx.timeLeft()))).text()),
+    async (n) => parseBokjiList(await (await get(BOKJI_LIST + "?PG=" + n, null, Math.min(4000, ctx.timeLeft()))).text()),
     pageErrors
   );
   if (!lists.some((l) => l && l.length)) {
