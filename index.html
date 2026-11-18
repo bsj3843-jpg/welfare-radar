@@ -667,6 +667,7 @@
   PROGRAMS.forEach(function(p, i){ p.id = i; });
   var BASE_PROGRAMS = PROGRAMS.slice();
   var scrapedItems = [];
+  var koreaItems = [];
   var userItems = [];
   var scrapedUpdatedAt = null;
 
@@ -1159,7 +1160,7 @@
   function rebuildPrograms(){
     var seen = {};
     var merged = [];
-    BASE_PROGRAMS.concat(scrapedItems).forEach(function(p){
+    BASE_PROGRAMS.concat(scrapedItems, koreaItems).forEach(function(p){
       var k = programKey(p);
       if (seen[k]) return;
       seen[k] = true;
@@ -1198,9 +1199,8 @@
   function updatedLabel(iso){
     return new Date(Date.parse(iso) + 9 * 3600 * 1000).toISOString().slice(0, 16).replace('T', ' ');
   }
-  function applyScraped(data){
-    scrapedUpdatedAt = data.updatedAt || null;
-    scrapedItems = (data.items || []).filter(function(p){
+  function cleanItems(list){
+    return (list || []).filter(function(p){
       return p && typeof p.title === 'string' && typeof p.url === 'string' && ISO_DAY.test(p.start) && ISO_DAY.test(p.end);
     }).map(function(p){
       return {
@@ -1210,11 +1210,23 @@
         category: Array.isArray(p.category) ? p.category : []
       };
     });
+  }
+  function applyScraped(data){
+    scrapedUpdatedAt = data.updatedAt || null;
+    scrapedItems = cleanItems(data.items);
     if (data.updatedAt && data.date >= LAST_UPDATED) {
       document.getElementById('lastUpdated').textContent = updatedLabel(data.updatedAt);
     }
     rebuildPrograms();
   }
+  function loadKorea(){
+    return fetch('data/korea.json?t=' + Date.now(), { cache: 'no-store' }).then(function(res){
+      return res.ok ? res.json() : null;
+    }).then(function(data){
+      if (data && Array.isArray(data.items)) { koreaItems = cleanItems(data.items); rebuildPrograms(); }
+    }).catch(function(){ /* optional file */ });
+  }
+  loadKorea();
   function loadScraped(){
     return fetch(API_BASE + '/api/scraped').then(function(res){
       return res.ok ? res.json() : null;
@@ -1252,13 +1264,13 @@
       if (!res.ok) throw new Error('bad_status');
       return res.json();
     }).then(function(){
-      return loadScraped();
+      return Promise.all([loadScraped(), loadKorea()]).then(function(r){ return r[0]; });
     }).then(function(data){
       setRefreshing(false);
       if (!data) { showToast('수집 결과를 불러오지 못했어요'); return; }
       var diff = openPrograms.length - beforeCount;
       var msg = diff > 0 ? '새 공고 ' + diff + '건을 찾았어요' : '최신 상태예요 · 접수중 ' + openPrograms.length + '건';
-      if (data.errors && data.errors.kaswc) msg += ' · 복지관협회는 매일 갱신';
+      if (data.errors && (data.errors.kaswc || data.errors.bokji)) msg += ' · 일부는 매시간 갱신';
       showToast(msg);
     }).catch(function(){
       setRefreshing(false);

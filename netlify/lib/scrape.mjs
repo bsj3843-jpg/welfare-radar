@@ -562,7 +562,7 @@ export async function scrapeAll(today, opts) {
     timeLeft: () => budgetMs - (Date.now() - t0),
   };
   const jobs = { kpang: scrapeKpang, holt: scrapeHolt, kaswc: scrapeKaswc, saswc: scrapeSaswc, bokji: scrapeBokji };
-  const names = Object.keys(jobs);
+  const names = (opts && opts.only) || Object.keys(jobs);
   const settled = await Promise.allSettled(names.map((n) => jobs[n](day, ctx)));
   const items = {};
   const errors = {};
