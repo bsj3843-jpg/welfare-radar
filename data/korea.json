@@ -1,6 +1,6 @@
 {
- "updatedAt": "2026-11-19T05:17:20.629Z",
- "date": "2026-11-19",
+ "updatedAt": "2026-11-19T23:10:50.969Z",
+ "date": "2026-11-20",
  "items": [
   {
    "source": "bokji",
@@ -13,7 +13,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -31,7 +31,7 @@
     "위기긴급지원",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -49,7 +49,7 @@
     "의료비",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -62,7 +62,7 @@
    "category": [
     "기타"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -77,7 +77,7 @@
    "category": [
     "교육비"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -94,7 +94,7 @@
     "위기긴급지원",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -111,7 +111,7 @@
     "교육비",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -126,7 +126,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -142,7 +142,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -158,7 +158,7 @@
     "자립지원",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -176,7 +176,7 @@
     "자립지원",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -192,21 +192,7 @@
     "교육비",
     "자립지원"
    ],
-   "fetchedAt": "2026-11-18"
-  },
-  {
-   "source": "bokji",
-   "title": "AI 챌린저스 1기 모집(~11/19)",
-   "org": "동그라미재단",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33243",
-   "start": "2026-11-06",
-   "end": "2026-11-19",
-   "target": [],
-   "category": [
-    "교육비",
-    "자립지원"
-   ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -223,7 +209,7 @@
     "주거비",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -238,7 +224,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -254,7 +240,7 @@
     "자립지원",
     "심리정서지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -272,7 +258,7 @@
     "의료비",
     "교육비"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -290,7 +276,7 @@
     "교육비",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -304,7 +290,7 @@
     "교육비",
     "자립지원"
    ],
-   "fetchedAt": "2026-11-18"
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "bokji",
@@ -352,6 +338,19 @@
     "물품지원"
    ],
    "fetchedAt": "2026-11-19"
+  },
+  {
+   "source": "bokji",
+   "title": "영화 〈여전히 찬란하게〉 사회복지 현장 관계자 대상 단체관람 모집 안내",
+   "org": "페이지원필름 주식회사",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33259",
+   "start": "2026-11-19",
+   "end": "2099-12-31",
+   "target": [],
+   "category": [
+    "심리정서지원"
+   ],
+   "fetchedAt": "2026-11-20"
   },
   {
    "source": "kaswc",
