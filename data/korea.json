@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-19T00:05:01.431Z",
+ "updatedAt": "2026-11-19T05:17:20.629Z",
  "date": "2026-11-19",
  "items": [
   {
@@ -321,6 +321,35 @@
    "category": [
     "생계비",
     "주거비"
+   ],
+   "fetchedAt": "2026-11-19"
+  },
+  {
+   "source": "bokji",
+   "title": "배분사업 아이디어 공모전 접수 안내(2026.11.16~2027.1.31)",
+   "org": "사회복지공동모금회",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33257",
+   "start": "2026-11-16",
+   "end": "2027-01-15",
+   "target": [],
+   "category": [
+    "주거비",
+    "교육비"
+   ],
+   "fetchedAt": "2026-11-19"
+  },
+  {
+   "source": "bokji",
+   "title": "2026년 본죽과 함께하는 저소득 국가유공자 동지팥죽 나눔 신청 안내(~12/2)",
+   "org": "사회복지법인우양",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33258",
+   "start": "2026-11-17",
+   "end": "2026-12-02",
+   "target": [
+    "노인"
+   ],
+   "category": [
+    "물품지원"
    ],
    "fetchedAt": "2026-11-19"
   },
