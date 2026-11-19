@@ -552,7 +552,7 @@
 </div>
 
 <script>
-  var LAST_UPDATED = "2026-11-18";
+  var LAST_UPDATED = "2026-11-19";
   var API_BASE = "https://snwc.netlify.app";
 
   var SOURCES = { kpang: "정보광장", holt: "홀트아동복지회", kaswc: "한국사회복지관협회", saswc: "서울시사회복지관협회", bokji: "복지넷", user: "직원 등록" };
@@ -593,10 +593,13 @@
   ];
 
   var PROGRAMS = [
+    {source:"kpang", title:"2027년 국립청소년시설 취약계층청소년 동계 둥근세상만들기 캠프 공개모집", org:"한국청소년활동진흥원", url:"https://kpang.kr/2026111904/", start:"2026-11-16", end:"2026-11-30", target:["청소년"], category:["교육비"]},
+    {source:"kpang", title:"2026년 하반기 HEX 악기나눔 이벤트(1차) 참여기관 모집", org:"사회복지법인 함께걷는아이들 올키즈기프트", url:"https://kpang.kr/2026111903/", start:"2026-11-23", end:"2026-12-04", target:["아동","청소년"], category:["물품지원"]},
+    {source:"kpang", title:"2027년 청년 생활안정 지원사업 참여자 모집", org:"아름다운재단·(사)여울돌 사각지대청년지원센터 봄", url:"https://kpang.kr/2026111902/", start:"2026-11-16", end:"2026-11-29", target:["청년"], category:["생계비","자립지원"]},
+    {source:"kpang", title:"여성한부모 자립 지원사업 「리프레시 데이」 참여자 모집", org:"동방사회복지회", url:"https://kpang.kr/2026111901/", start:"2026-11-16", end:"2026-11-30", target:["한부모"], category:["심리정서지원"]},
     {source:"kpang", title:"2026년 정인욱학술장학재단 복지사각지대 지원사업 공모", org:"정인욱학술장학재단", url:"https://kpang.kr/2026111805/", start:"2026-11-18", end:"2026-12-02", target:["위기가정"], category:["위기긴급지원"]},
     {source:"kpang", title:"2026년 본죽과 함께하는 저소득 국가유공자 동지팥죽 나눔 지원사업", org:"우양재단·본죽", url:"https://kpang.kr/2026111804/", start:"2026-11-17", end:"2026-12-02", target:[], category:["물품지원"]},
     {source:"kpang", title:"2026년 우양재단 쌀타의 장학선물 지원사업", org:"우양재단", url:"https://kpang.kr/2026111803/", start:"2026-11-17", end:"2026-11-29", target:["아동","청소년"], category:["교육비"]},
-    {source:"kpang", title:"2026년 CJ도너스캠프 김장김치 나눔 지원사업", org:"CJ나눔재단·CJ도너스캠프", url:"https://kpang.kr/2026111802/", start:"2026-11-16", end:"2026-11-18", target:["아동"], category:["물품지원"]},
     {source:"kpang", title:"2026년 스타벅스 역사문화체험 프로그램 참여기관 모집", org:"초록우산어린이재단", url:"https://kpang.kr/2026111801/", start:"2026-11-18", end:"2026-11-23", target:["아동"], category:["기타"]},
     {source:"kpang", title:"2026년 우리는해 꿈 응원상자 크리스마스 꾸러미 물품 지원사업 참여기관 모집", org:"세이브더칠드런", url:"https://kpang.kr/2026111707/", start:"2026-11-16", end:"2026-12-04", target:["아동"], category:["물품지원"]},
     {source:"kpang", title:"2026년 오픈월드 World Children’s Day 선물 지원 아동 모집", org:"(사)오픈월드", url:"https://kpang.kr/2026111706/", start:"2026-11-16", end:"2026-11-22", target:["아동"], category:["물품지원"]},
@@ -604,13 +607,11 @@
     {source:"kpang", title:"2027년 SK 뉴스쿨 신입생 모집 안내", org:"SK 뉴스쿨", url:"https://kpang.kr/2026111704/", start:"2026-12-01", end:"2026-12-14", target:["청년"], category:["자립지원","교육비"]},
     {source:"kpang", title:"2027년 위기가정 식사지원 공모사업 ‘희망도시락’ 참여기관 모집", org:"희망브리지 전국재해구호협회", url:"https://kpang.kr/2026111703/", start:"2026-11-16", end:"2026-11-27", target:["위기가정"], category:["물품지원","위기긴급지원"]},
     {source:"kpang", title:"2026년 폭력피해 이주가정 겨울 나들이 지원사업", org:"우양재단", url:"https://kpang.kr/2026111702/", start:"2026-11-16", end:"2026-11-27", target:["다문화","위기가정"], category:["심리정서지원"]},
-    {source:"kpang", title:"2027 청년 생활안정 지원사업", org:"아름다운재단·(사)여울돌사각지대청년지원센터 봄", url:"https://kpang.kr/2026111701/", start:"2026-11-16", end:"2026-11-29", target:["청년"], category:["생계비"]},
     {source:"kpang", title:"2026 한국남부발전 「KOSPO 드림라이트 멘토링」 2기 멘티 기관 신청안내", org:"초록우산 부산지역본부·한국남부발전", url:"https://kpang.kr/2026111606/", start:"2026-11-16", end:"2026-11-20", target:["아동"], category:["교육비"]},
     {source:"kpang", title:"2026년 우양재단 김장김치 공모사업 신청 안내", org:"우양재단", url:"https://kpang.kr/2026111605/", start:"2026-11-16", end:"2026-11-27", target:["노인"], category:["물품지원"]},
     {source:"kpang", title:"2026 CJ도너스캠프 겨울방학 문화체험·캠프 제안서 모집", org:"CJ도너스캠프", url:"https://kpang.kr/2026111604/", start:"2026-11-13", end:"2026-11-20", target:["아동"], category:["기타"]},
     {source:"kpang", title:"2026 지홈랩스와 함께하는 반려 취약가구 지원사업", org:"사단법인 함께하는 사랑밭", url:"https://kpang.kr/2026111603/", start:"2026-11-16", end:"2026-11-27", target:[], category:["기타"]},
     {source:"kpang", title:"2026년 그룹홈 학습용 IT 기기 지원 사업", org:"일주학술문화재단", url:"https://kpang.kr/2026111602/", start:"2026-11-09", end:"2026-11-20", target:["아동","청소년"], category:["물품지원"]},
-    {source:"kpang", title:"공동생활가정 아동·청소년 맞춤형 축하지원 사업", org:"열매나눔재단", url:"https://kpang.kr/2026111601/", start:"2026-11-13", end:"2026-11-18", target:["아동","청소년"], category:["물품지원"]},
     {source:"kpang", title:"2027 빛의소리희망기금 장애 어린이·청소년 문화예술 지원사업", org:"사회복지법인 함께걷는아이들", url:"https://kpang.kr/2026111302/", start:"2026-11-12", end:"2026-11-30", target:["아동","청소년","장애인"], category:["교육비"]},
     {source:"kpang", title:"[경남] 2027년 초록우산 아이리더 신규모집 안내", org:"초록우산 경남지역본부", url:"https://kpang.kr/2026111301/", start:"2026-10-29", end:"2026-11-20", target:["아동"], category:["교육비"]},
     {source:"kpang", title:"2026년 「KB Dream Wave 2030」 KB라스쿨 고등 6기 멘티 상시 모집", org:"사단법인 도구", url:"https://kpang.kr/2026111202/", start:"2026-11-12", end:"2099-12-31", target:["청소년"], category:["교육비"]},
@@ -625,10 +626,8 @@
     {source:"kpang", title:"2026년 재단법인 빛이나 여성용품 지원사업", org:"재단법인 빛이나", url:"https://kpang.kr/2026110604/", start:"2026-11-06", end:"2026-11-29", target:[], category:["물품지원"]},
     {source:"kpang", title:"2026 볼보 장애어린이 보조기기 지원사업", org:"푸르메재단", url:"https://kpang.kr/2026110602/", start:"2026-11-05", end:"2026-12-18", target:["아동","장애인"], category:["의료비"]},
     {source:"kpang", title:"(재)월정어린이복지재단 아동복지 지원 공모 사업", org:"(재)월정어린이복지재단", url:"https://kpang.kr/2026110402/", start:"2026-11-11", end:"2026-11-25", target:["아동"], category:["생계비"]},
-    {source:"kpang", title:"2026년 여성한부모 '내 일(job)을 더 새롭게' 맞춤형 자립지원 '커리어업' 대상자 2차 모집", org:"신한은행", url:"https://kpang.kr/2026110303-2/", start:"2026-11-02", end:"2026-11-18", target:["한부모"], category:["자립지원"]},
     {source:"kpang", title:"[서울,인천,경기] 2026년 한부모여성 재기지원사업", org:"한국미혼모가족협회", url:"https://kpang.kr/2026110302/", start:"2026-11-02", end:"2026-11-20", target:["한부모","위기가정"], category:["자립지원","위기긴급지원"]},
     {source:"kpang", title:"[충남] 2027년 사회복지공동모금회 차량지원사업", org:"사회복지공동모금회", url:"https://kpang.kr/2026110303/", start:"2026-11-02", end:"2026-11-30", target:[], category:["기타"]},
-    {source:"kpang", title:"2026년 KB캐피탈 위기임산부·아동 양육 첫걸음 지원사업 협력기관 모집", org:"세이브더칠드런", url:"https://kpang.kr/2026103001/", start:"2026-10-30", end:"2026-11-18", target:["아동","위기가정"], category:["생계비","위기긴급지원"]},
     {source:"kpang", title:"2026년 포스코 희망이음 산재근로자 가족 긴급 생계지원 사업", org:"초록우산", url:"https://kpang.kr/2026102903/", start:"2026-08-01", end:"2026-12-10", target:["위기가정"], category:["생계비","위기긴급지원"]},
     {source:"kpang", title:"2026년 JDC 복지시설 친환경 특장차량(전기차) 지원사업", org:"제주사회복지공동모금회", url:"https://kpang.kr/2026102901/", start:"2026-10-28", end:"2026-11-27", target:[], category:["기타"]},
     {source:"kpang", title:"2026년 아동 기저귀 및 생필품 정기 지원사업", org:"사회적협동조합 돌고도네이션", url:"https://kpang.kr/2026102601/", start:"2026-11-02", end:"2099-12-31", target:["아동"], category:["물품지원"]},
@@ -639,6 +638,8 @@
     {source:"holt", title:"국내·외 입양인 및 입양가족을 위한 홈페이지 「ITDA 잇다」개설안내", org:"홀트아동복지회", url:"https://love.holt.or.kr/request_support/%ea%b5%ad%eb%82%b4%c2%b7%ec%99%b8-%ec%9e%85%ec%96%91%ec%9d%b8-%eb%b0%8f-%ec%9e%85%ec%96%91%ea%b0%80%ec%a1%b1%ec%9d%84-%ec%9c%84%ed%95%9c-%ed%99%88%ed%8e%98%ec%9d%b4%ec%a7%80-%e3%80%8citda-%ec%9e%87/", start:"2026-01-26", end:"2026-12-31", target:["아동","청소년"], category:["생계비"]},
     {source:"holt", title:"2026 통합위기가정지원사업 '우리 가족을 지켜주세요' 대상자 모집", org:"홀트아동복지회", url:"https://love.holt.or.kr/request_support/2026-%ed%86%b5%ed%95%a9%ec%9c%84%ea%b8%b0%ea%b0%80%ec%a0%95%ec%a7%80%ec%9b%90%ec%82%ac%ec%97%85-%ec%9a%b0%eb%a6%ac-%ea%b0%80%ec%a1%b1%ec%9d%84-%ec%a7%80%ec%bc%9c%ec%a3%bc%ec%84%b8%ec%9a%94/", start:"2026-01-01", end:"2026-12-31", target:["아동","청소년"], category:["위기긴급지원"]},
 
+    {source:"kaswc", title:"2027년 국립청소년시설 취약계층청소년 동계 '둥근세상만들기' 캠프 공개모집", org:"한국청소년활동진흥원", url:"https://share.kaswc.or.kr/info2/9732", start:"2026-11-16", end:"2026-11-30", target:["청소년"], category:["교육비"]},
+    {source:"kaswc", title:"2026년 「KB Dream Wave 2030」 KB라스쿨 고등 사업 6기 멘티 모집", org:"사단법인 도구", url:"https://share.kaswc.or.kr/info2/9714", start:"2026-11-18", end:"2026-12-31", target:["청소년"], category:["교육비"]},
     {source:"kaswc", title:"서울시자살예방센터 「서울시 경제위기 중장년 고인 대상 서울형 심리부검 사업」", org:"서울시자살예방센터", url:"https://share.kaswc.or.kr/info2/9702", start:"2026-11-02", end:"2026-12-30", target:["위기가정"], category:["심리정서지원"]},
     {source:"kaswc", title:"한국아스트라제네카 희망샘기금 2027년 신규 장학생 모집 안내", org:"아이들과미래재단", url:"https://share.kaswc.or.kr/info2/9693", start:"2026-11-02", end:"2026-11-20", target:["청소년"], category:["교육비"]},
     {source:"kaswc", title:"돌고도네이션 아동 기저귀 정기 지원 기관 모집 공고", org:"돌고도네이션", url:"https://share.kaswc.or.kr/info2/9647", start:"2026-11-02", end:"2026-12-31", target:["아동"], category:["물품지원"]},
@@ -654,10 +655,11 @@
     {source:"kaswc", title:"IBK와 함께하는 중소기업 맞춤형지원사업 신청", org:"대한사회복지회", url:"https://share.kaswc.or.kr/info2/7309", start:"2025-10-01", end:"2026-12-31", target:[], category:["기타"]},
     {source:"kaswc", title:"2026년 함께하는 사랑밭 『위기가정 희망지원사업』 안내", org:"함께하는 사랑밭", url:"https://share.kaswc.or.kr/info2/7012", start:"2026-02-13", end:"2026-12-31", target:["위기가정"], category:["위기긴급지원"]},
     {source:"kaswc", title:"2026년 굿피플 방송 및 온라인 모금 사례 안내문", org:"굿피플인터내셔널", url:"https://share.kaswc.or.kr/info2/6957", start:"2026-01-01", end:"2026-12-31", target:[], category:["기타"]},
-    {source:"saswc", title:"2027 열매지구돌봄 프로젝트 모집 안내", org:"사단법인 에코나우", url:"https://www.saswc.org/support/289112", start:"2026-11-02", end:"2026-11-20", target:[], category:["기타"]},
     {source:"saswc", title:"2026년 위기아동지원사업 신청 안내", org:"세이브더칠드런", url:"https://www.saswc.org/support/289094", start:"2026-11-06", end:"2099-12-31", target:["아동"], category:["생계비","교육비","주거비","의료비"]},
     {source:"bokji", title:"2026년 AIP안심 주거 지원사업 참여자 모집(기간연장~11/24)", org:"사회복지법인 따뜻한동행", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33245", start:"2026-10-27", end:"2026-11-24", target:["노인","장애인"], category:["주거비","위기긴급지원"]},
     {source:"bokji", title:"AI 챌린저스 1기 모집(~11/19)", org:"동그라미재단", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33243", start:"2026-11-06", end:"2026-11-19", target:[], category:["교육비","자립지원"]},
+    {source:"bokji", title:"AI 아카데미 10기(서울) 교육생 모집(~11/25)", org:"동그라미재단", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33254", start:"2026-11-18", end:"2026-11-25", target:[], category:["교육비","자립지원"]},
+    {source:"bokji", title:"[우리금융캐피탈x세이브더칠드런] 아동복지시설 대상 전기차 지원사업 참여기관 모집(~11/27)", org:"사회복지법인 세이브더칠드런코리아", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33236", start:"2026-11-09", end:"2026-11-27", target:["아동"], category:["기타"]},
     {source:"bokji", title:"2027년 K-water 장학회 운영기관 모집 안내", org:"한국수자원공사", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33212", start:"2026-11-06", end:"2026-11-24", target:["청소년"], category:["교육비"]},
     {source:"bokji", title:"자동문 무료설치 캠페인", org:"주식회사코아드", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33209", start:"2026-11-05", end:"2099-12-31", target:[], category:["기타"]},
     {source:"bokji", title:"(사)김제동과어깨동무 청소년 보호시설 맞춤 겨울나기 지원사업 공고(의류/김치)", org:"사단법인 김제동과어깨동무", url:"https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33205", start:"2026-11-16", end:"2026-11-20", target:["아동","청소년","한부모"], category:["위기긴급지원","물품지원"]},
