@@ -1,6 +1,6 @@
 {
- "updatedAt": "2026-11-19T23:10:50.969Z",
- "date": "2026-11-20",
+ "updatedAt": "2026-11-22T23:58:27.441Z",
+ "date": "2026-11-23",
  "items": [
   {
    "source": "bokji",
@@ -13,25 +13,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-20"
-  },
-  {
-   "source": "bokji",
-   "title": "(사)김제동과어깨동무 청소년 보호시설 맞춤 겨울나기 지원사업 공고(의류/김치)",
-   "org": "사단법인 김제동과어깨동무",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33205",
-   "start": "2026-11-16",
-   "end": "2026-11-20",
-   "target": [
-    "아동",
-    "청소년",
-    "한부모"
-   ],
-   "category": [
-    "위기긴급지원",
-    "물품지원"
-   ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -49,7 +31,7 @@
     "의료비",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -77,7 +59,7 @@
    "category": [
     "교육비"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -94,24 +76,7 @@
     "위기긴급지원",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-20"
-  },
-  {
-   "source": "bokji",
-   "title": "글로벌 유학생 교육비 지원사업(2027) 대상자 모집 안내(~11/22)",
-   "org": "사단법인 오픈월드",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33221",
-   "start": "2026-11-10",
-   "end": "2026-11-22",
-   "target": [
-    "청년",
-    "다문화"
-   ],
-   "category": [
-    "교육비",
-    "위기긴급지원"
-   ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -126,7 +91,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -142,7 +107,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -158,7 +123,7 @@
     "자립지원",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -176,7 +141,7 @@
     "자립지원",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -192,7 +157,7 @@
     "교육비",
     "자립지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -209,22 +174,7 @@
     "주거비",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-20"
-  },
-  {
-   "source": "bokji",
-   "title": "World Children's Day 선물 지원 아동 모집",
-   "org": "사단법인 오픈월드",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33247",
-   "start": "2026-11-16",
-   "end": "2026-11-22",
-   "target": [
-    "아동"
-   ],
-   "category": [
-    "물품지원"
-   ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -240,7 +190,7 @@
     "자립지원",
     "심리정서지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -258,7 +208,7 @@
     "의료비",
     "교육비"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -276,7 +226,7 @@
     "교육비",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -290,7 +240,7 @@
     "교육비",
     "자립지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -308,7 +258,7 @@
     "생계비",
     "주거비"
    ],
-   "fetchedAt": "2026-11-19"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -322,7 +272,7 @@
     "주거비",
     "교육비"
    ],
-   "fetchedAt": "2026-11-19"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -337,7 +287,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-19"
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "bokji",
@@ -350,7 +300,23 @@
    "category": [
     "심리정서지원"
    ],
-   "fetchedAt": "2026-11-20"
+   "fetchedAt": "2026-11-23"
+  },
+  {
+   "source": "bokji",
+   "title": "야간돌봄교실 포티야(夜)놀자(4기) 운영기관 모집 공고 (~'26.12.1.(화) 14:00)",
+   "org": "한국공항공사",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33264",
+   "start": "2026-11-20",
+   "end": "2026-12-01",
+   "target": [
+    "아동",
+    "청년"
+   ],
+   "category": [
+    "교육비"
+   ],
+   "fetchedAt": "2026-11-23"
   },
   {
    "source": "kaswc",
@@ -524,18 +490,6 @@
   },
   {
    "source": "kaswc",
-   "title": "한국아스트라제네카 희망샘기금 2027년 신규 장학생 모집 안내",
-   "org": "아이들과미래재단",
-   "url": "https://share.kaswc.or.kr/info2/9693",
-   "start": "2026-11-02",
-   "end": "2026-11-20",
-   "target": [],
-   "category": [
-    "교육비"
-   ]
-  },
-  {
-   "source": "kaswc",
    "title": "「서울시 경제위기 중장년 고인 대상 서울형 심리부검 사업」",
    "org": "서울시자살예방센터",
    "url": "https://share.kaswc.or.kr/info2/9702",
@@ -559,6 +513,32 @@
    ],
    "category": [
     "교육비"
+   ]
+  },
+  {
+   "source": "kaswc",
+   "title": "보이스피싱 피해자 일상 회복 지원사업 「다시 일상으로」",
+   "org": "굿네이버스",
+   "url": "https://share.kaswc.or.kr/info2/9719",
+   "start": "2026-11-23",
+   "end": "2027-04-23",
+   "target": [],
+   "category": [
+    "위기긴급지원"
+   ]
+  },
+  {
+   "source": "kaswc",
+   "title": "올키즈기프트 ‘2026 하반기 HEX 악기나눔 이벤트’",
+   "org": "함께걷는아이들",
+   "url": "https://share.kaswc.or.kr/info2/9726",
+   "start": "2026-11-23",
+   "end": "2026-12-04",
+   "target": [
+    "아동"
+   ],
+   "category": [
+    "기타"
    ]
   },
   {
