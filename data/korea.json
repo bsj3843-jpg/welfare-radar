@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-24T23:39:52.813Z",
+ "updatedAt": "2026-11-25T02:17:23.719Z",
  "date": "2026-11-25",
  "items": [
   {
@@ -302,6 +302,19 @@
     "물품지원"
    ],
    "fetchedAt": "2026-11-24"
+  },
+  {
+   "source": "bokji",
+   "title": "쌍용종합사회복지관 위탁운영자 모집 재공고",
+   "org": "천안시청",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33272",
+   "start": "2026-12-01",
+   "end": "2026-12-08",
+   "target": [],
+   "category": [
+    "기타"
+   ],
+   "fetchedAt": "2026-11-25"
   },
   {
    "source": "kaswc",
