@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-25T02:17:23.719Z",
+ "updatedAt": "2026-11-25T06:17:20.522Z",
  "date": "2026-11-25",
  "items": [
   {
@@ -549,6 +549,31 @@
    "target": [
     "청소년"
    ],
+   "category": [
+    "기타"
+   ]
+  },
+  {
+   "source": "kaswc",
+   "title": "2027년 교통사고 피해가정 신규 장학생 모집",
+   "org": "녹색교통운동",
+   "url": "https://share.kaswc.or.kr/info2/9756",
+   "start": "2026-11-11",
+   "end": "2026-12-31",
+   "target": [],
+   "category": [
+    "교육비",
+    "위기긴급지원"
+   ]
+  },
+  {
+   "source": "kaswc",
+   "title": "2026년 KB창작동화 배분사업 안내",
+   "org": "아이들과미래재단",
+   "url": "https://share.kaswc.or.kr/info2/9761",
+   "start": "2026-11-23",
+   "end": "2026-11-27",
+   "target": [],
    "category": [
     "기타"
    ]
