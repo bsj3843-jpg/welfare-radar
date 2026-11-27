@@ -1,6 +1,6 @@
 {
- "updatedAt": "2026-11-26T00:05:31.900Z",
- "date": "2026-11-26",
+ "updatedAt": "2026-11-27T02:17:21.625Z",
+ "date": "2026-11-27",
  "items": [
   {
    "source": "bokji",
@@ -13,7 +13,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -31,7 +31,7 @@
     "의료비",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -61,7 +61,7 @@
     "위기긴급지원",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -76,7 +76,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -92,7 +92,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -108,7 +108,7 @@
     "자립지원",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -126,7 +126,7 @@
     "자립지원",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -142,7 +142,7 @@
     "교육비",
     "자립지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -158,7 +158,7 @@
     "자립지원",
     "심리정서지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -176,7 +176,7 @@
     "의료비",
     "교육비"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -194,7 +194,7 @@
     "교육비",
     "위기긴급지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -212,7 +212,7 @@
     "생계비",
     "주거비"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -226,7 +226,7 @@
     "주거비",
     "교육비"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -241,7 +241,7 @@
    "category": [
     "물품지원"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -270,7 +270,7 @@
    "category": [
     "교육비"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "bokji",
@@ -300,7 +300,23 @@
    "category": [
     "기타"
    ],
-   "fetchedAt": "2026-11-25"
+   "fetchedAt": "2026-11-27"
+  },
+  {
+   "source": "bokji",
+   "title": "2026 위기가정 지원 사업 안내",
+   "org": "KBS강태원복지재단",
+   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33283",
+   "start": "2026-11-27",
+   "end": "2026-12-01",
+   "target": [
+    "위기가정"
+   ],
+   "category": [
+    "생계비",
+    "의료비"
+   ],
+   "fetchedAt": "2026-11-27"
   },
   {
    "source": "kaswc",
@@ -559,6 +575,18 @@
    "url": "https://share.kaswc.or.kr/info2/9761",
    "start": "2026-11-23",
    "end": "2026-11-27",
+   "target": [],
+   "category": [
+    "기타"
+   ]
+  },
+  {
+   "source": "kaswc",
+   "title": "사랑의열매 배분사업 아이디어 공모전",
+   "org": "사회복지공동모금회",
+   "url": "https://share.kaswc.or.kr/info2/9819",
+   "start": "2026-11-16",
+   "end": "2027-01-15",
    "target": [],
    "category": [
     "기타"
