@@ -1,6 +1,6 @@
 {
- "updatedAt": "2026-11-27T02:17:21.625Z",
- "date": "2026-11-27",
+ "updatedAt": "2026-11-27T23:57:45.891Z",
+ "date": "2026-11-28",
  "items": [
   {
    "source": "bokji",
@@ -75,56 +75,6 @@
    ],
    "category": [
     "물품지원"
-   ],
-   "fetchedAt": "2026-11-27"
-  },
-  {
-   "source": "bokji",
-   "title": "2026년 김장김치 공모사업 신청 안내(~11/27)",
-   "org": "사회복지법인우양",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33235",
-   "start": "2026-11-13",
-   "end": "2026-11-27",
-   "target": [
-    "노인",
-    "장애인"
-   ],
-   "category": [
-    "물품지원"
-   ],
-   "fetchedAt": "2026-11-27"
-  },
-  {
-   "source": "bokji",
-   "title": "아동복지시설 대상 전기차 지원사업 참여기관 모집(~11/27)",
-   "org": "사회복지법인 세이브더칠드런코리아",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33236",
-   "start": "2026-11-09",
-   "end": "2026-11-27",
-   "target": [
-    "아동"
-   ],
-   "category": [
-    "자립지원",
-    "위기긴급지원"
-   ],
-   "fetchedAt": "2026-11-27"
-  },
-  {
-   "source": "bokji",
-   "title": "위기가정 식사지원 공모사업 '희망도시락' 공고",
-   "org": "전국재해구호협회",
-   "url": "https://www.bokji.net/not/biz/01_01.bokji?BOARDIDX=33239",
-   "start": "2026-11-16",
-   "end": "2026-11-27",
-   "target": [
-    "아동",
-    "청소년",
-    "위기가정"
-   ],
-   "category": [
-    "자립지원",
-    "위기긴급지원"
    ],
    "fetchedAt": "2026-11-27"
   },
@@ -287,7 +237,7 @@
     "심리정서지원",
     "물품지원"
    ],
-   "fetchedAt": "2026-11-26"
+   "fetchedAt": "2026-11-28"
   },
   {
    "source": "bokji",
@@ -566,18 +516,6 @@
    "category": [
     "교육비",
     "위기긴급지원"
-   ]
-  },
-  {
-   "source": "kaswc",
-   "title": "2026년 KB창작동화 배분사업 안내",
-   "org": "아이들과미래재단",
-   "url": "https://share.kaswc.or.kr/info2/9761",
-   "start": "2026-11-23",
-   "end": "2026-11-27",
-   "target": [],
-   "category": [
-    "기타"
    ]
   },
   {
