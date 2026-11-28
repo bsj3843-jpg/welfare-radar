@@ -1277,7 +1277,7 @@
       if (!data) { showToast('수집 결과를 불러오지 못했어요'); return; }
       var diff = openPrograms.length - beforeCount;
       var msg = diff > 0 ? '새 공고 ' + diff + '건을 찾았어요' : '최신 상태예요 · 접수중 ' + openPrograms.length + '건';
-      if (data.errors && (data.errors.kaswc || data.errors.bokji)) msg += ' · 일부는 매시간 갱신';
+      if (data.errors && (data.errors.kaswc || data.errors.bokji)) msg += ' · 일부는 6시간마다 갱신';
       showToast(msg);
     }).catch(function(){
       setRefreshing(false);
